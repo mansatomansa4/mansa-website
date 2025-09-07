@@ -1,0 +1,15 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer triangle - purple -->
+  <path d="M400 50 L720 450 L80 450 Z" fill="none" stroke="#9333ea" stroke-width="8"/>
+  
+  <!-- Middle triangle - orange -->
+  <path d="M400 100 L650 400 L150 400 Z" fill="none" stroke="#ea580c" stroke-width="8"/>
+  
+  <!-- Inner triangle - teal -->
+  <path d="M400 150 L580 350 L220 350 Z" fill="none" stroke="#0d9488" stroke-width="8"/>
+  
+  <!-- Text -->
+  <text x="400" y="280" font-family="Arial, sans-serif" font-size="42" font-weight="bold" text-anchor="middle" fill="#374151">
+    MANSA-TO-MANSA
+  </text>
+</svg>
