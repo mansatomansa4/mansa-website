@@ -84,21 +84,25 @@ export default function SignupPage() {
     };
 
     try {
-      const { supabase } = await import('@/lib/supabase');
-      const { error: insertError } = await supabase.from('members').insert([submissionData]);
+      // Submit member application via backend API
+      const { api } = await import('@/lib/api');
+      const { error: submitError } = await api.submitMemberApplication(submissionData);
 
-      if (insertError) {
-        console.error('Insert error:', insertError);
-        setError(insertError.message || 'Something went wrong. Please try again.');
-      } else {
-        setFormData(initialFormState);
-        setMembershipType('');
-        setGender('');
-        setShowModal(true);
+      if (submitError) {
+        console.error('Member application submission failed:', submitError);
+        throw new Error(submitError);
       }
+
+      console.log('Member application submitted successfully');
+
+      // Success - reset form and show modal
+      setFormData(initialFormState);
+      setMembershipType('');
+      setGender('');
+      setShowModal(true);
     } catch (error) {
       console.error('Submission error:', error);
-      setError('Failed to submit form. Please try again.');
+      setError((error as Error).message || 'Failed to submit form. Please try again.');
     }
 
     setLoading(false);

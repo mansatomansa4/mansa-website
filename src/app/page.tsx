@@ -44,17 +44,7 @@ export default function HomePage() {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 relative overflow-hidden">
-      {/* Premium Background Effects */}
-      <motion.div 
-        className="fixed inset-0 z-0"
-        style={{ y: yBg, opacity }}
-      >
-        <div className="absolute inset-0 bg-mesh opacity-20 dark:opacity-10"></div>
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-primary-400/15 to-secondary-400/15 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-accent-400/15 to-electric-400/15 rounded-full blur-2xl animate-bounce-gentle"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-secondary-300/10 to-primary-300/10 rounded-full blur-3xl animate-morph"></div>
-      </motion.div>
+    <div className="min-h-screen bg-white dark:bg-gray-900 relative overflow-hidden">
       
       {/* Content */}
       <div className="relative z-10">
@@ -72,39 +62,27 @@ export default function HomePage() {
           variants={sectionVariants}
           className="relative py-12 sm:py-32 overflow-hidden"
         >
-          {/* Sophisticated Background */}
+          {/* Clean Background */}
           <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary-50/50 via-secondary-50/50 to-accent-50/50 dark:from-primary-950/30 dark:via-secondary-950/30 dark:to-accent-950/30"></div>
+            <div className="absolute inset-0 bg-gray-50/50 dark:bg-gray-800/30"></div>
             <motion.div
-              className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-400 via-secondary-400 to-accent-400"
+              className="absolute top-0 left-0 right-0 h-1 bg-brand-500"
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 2 }}
             />
-            <div className="absolute top-1/4 right-0 w-1/3 h-full bg-gradient-to-l from-primary-100/30 to-transparent dark:from-primary-900/20 rounded-l-full"></div>
           </div>
           
           <div className="relative z-10 container-enhanced">
             <motion.div variants={itemVariants} className="text-center mb-8 sm:mb-20">
-              {/* Premium Badge */}
+              {/* Professional Badge */}
               <motion.div
-                whileHover={{ scale: 1.05, rotate: [0, -2, 2, 0] }}
-                className="inline-flex items-center space-x-2 sm:space-x-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg text-primary-800 dark:text-primary-200 px-4 sm:px-8 py-2 sm:py-4 rounded-full text-sm sm:text-lg font-bold mb-6 sm:mb-12 border border-primary-200/50 dark:border-primary-700/50 shadow-2xl"
+                whileHover={{ scale: 1.05 }}
+                className="inline-flex items-center space-x-2 sm:space-x-3 bg-white dark:bg-gray-800 text-brand-600 dark:text-brand-400 px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-semibold mb-6 sm:mb-12 border border-gray-200 dark:border-gray-700 shadow-sm"
               >
-                <motion.div
-                  animate={{ rotate: 360, scale: [1, 1.2, 1] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                >
-                  <Trophy className="w-4 h-4 sm:w-6 sm:h-6 text-accent-500" />
-                </motion.div>
-                <span className="gradient-text font-black">Excellence in Community Building</span>
-                <motion.div
-                  animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <Star className="w-3 h-3 sm:w-5 sm:h-5 text-secondary-500" />
-                </motion.div>
+                <Trophy className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>Excellence in Community Building</span>
               </motion.div>
 
               {/* Professional Heading */}
@@ -130,7 +108,7 @@ export default function HomePage() {
                       whileInView={{ y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.7, duration: 1 }}
-                      className="inline-block bg-aurora bg-clip-text text-transparent bg-[length:400%_400%] animate-gradient-shift"
+                      className="inline-block text-primary-600 dark:text-primary-400 font-black"
                     >
                       Together
                     </motion.span>
@@ -144,7 +122,7 @@ export default function HomePage() {
                       whileInView={{ y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.9, duration: 1 }}
-                      className="inline-block gradient-text"
+                      className="inline-block text-accent-600 dark:text-accent-400 font-black"
                     >
                       Thrive{' '}
                     </motion.span>
@@ -153,7 +131,7 @@ export default function HomePage() {
                       whileInView={{ y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: 1.1, duration: 1 }}
-                      className="inline-block bg-cosmic bg-clip-text text-transparent bg-[length:400%_400%] animate-gradient-shift"
+                      className="inline-block text-secondary-600 dark:text-secondary-400 font-black"
                     >
                       Forever
                     </motion.span>
@@ -179,19 +157,19 @@ export default function HomePage() {
                 className="max-w-6xl mx-auto mb-8 sm:mb-16"
               >
                 <motion.p
-                  className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-light bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg p-3 sm:p-4 md:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/40 dark:border-gray-700/40 shadow-2xl"
+                  className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-800 dark:text-gray-100 leading-relaxed font-normal bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg p-3 sm:p-4 md:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-white/40 dark:border-gray-700/40 shadow-2xl"
                   whileHover={{ scale: 1.02, y: -8 }}
                   transition={{ duration: 0.4 }}
                 >
                   Join an{' '}
-                  <span className="font-bold gradient-text">elite network</span>{' '}
+                  <span className="font-bold text-primary-600 dark:text-primary-400">elite network</span>{' '}
                   of visionary leaders and innovators. At{' '}
-                  <span className="font-bold bg-gradient-to-r from-secondary-600 to-accent-600 bg-clip-text text-transparent">Mansa-to-Mansa</span>,{' '}
+                  <span className="font-bold text-secondary-600 dark:text-secondary-400">Mansa-to-Mansa</span>,{' '}
                   we cultivate{' '}
-                  <span className="font-bold bg-gradient-to-r from-accent-600 to-electric-600 bg-clip-text text-transparent">excellence</span>,{' '}
+                  <span className="font-bold text-accent-600 dark:text-accent-400">excellence</span>,{' '}
                   foster{' '}
-                  <span className="font-bold bg-gradient-to-r from-electric-600 to-primary-600 bg-clip-text text-transparent">innovation</span>, and{' '}
-                  <span className="font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">empower futures</span>{' '}
+                  <span className="font-bold text-electric-600 dark:text-electric-400">innovation</span>, and{' '}
+                  <span className="font-bold text-primary-700 dark:text-primary-300">empower futures</span>{' '}
                   across continents.
                 </motion.p>
               </motion.div>
@@ -231,7 +209,7 @@ export default function HomePage() {
                 >
                   <Lightbulb className="w-6 h-6" />
                 </motion.div>
-                <span className="bg-gradient-to-r from-secondary-600 via-accent-600 to-electric-600 bg-clip-text text-transparent font-black">Elite Mentorship Program</span>
+                <span className="text-secondary-700 dark:text-secondary-300 font-black">Elite Mentorship Program</span>
               </motion.div>
 
               {/* Professional Heading */}
@@ -240,7 +218,7 @@ export default function HomePage() {
                 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-black text-gray-900 dark:text-white mb-6 leading-tight"
               >
                 Mentorship That{' '}
-                <span className="bg-gradient-to-r from-secondary-600 via-purple-600 to-primary-600 bg-clip-text text-transparent">
+                <span className="text-secondary-600 dark:text-secondary-400 font-black">
                   Shapes Destinies
                 </span>
               </motion.h1>
@@ -404,10 +382,10 @@ export default function HomePage() {
             <motion.div variants={itemVariants} className="text-center mb-16">
               <div className="inline-flex items-center space-x-2 bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200 px-6 py-3 rounded-full text-lg font-bold mb-8">
                 <Globe2 className="w-5 h-5" />
-                <span className="gradient-text">Global Knowledge Hub</span>
+                <span className="text-primary-700 dark:text-primary-300 font-bold">Global Knowledge Hub</span>
               </div>
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-heading font-bold text-gray-900 dark:text-white mb-6">
-                Learn Fearlessly, <span className="gradient-text">Excel Together</span>
+                Learn Fearlessly, <span className="text-primary-600 dark:text-primary-400 font-bold">Excel Together</span>
               </h2>
               <p className="text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed font-light">
                 Collaborate on groundbreaking projects, conduct impactful research, and develop innovative solutions 
@@ -468,27 +446,24 @@ export default function HomePage() {
           <div className="relative z-10 container-enhanced">
             <motion.div
               variants={itemVariants}
-              className='relative overflow-hidden card-enhanced'
+              className='relative overflow-hidden bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-700 shadow-2xl'
             >
-              {/* Premium Background Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary-600/10 via-secondary-600/10 to-purple-600/10 rounded-3xl" />
-              
               {/* Premium Content */}
-              <div className='relative z-10 text-center space-y-6 sm:space-y-12 py-12 sm:py-20 px-4 sm:px-8 lg:px-16'>
+              <div className='text-center space-y-6 sm:space-y-12 py-12 sm:py-20 px-4 sm:px-8 lg:px-16'>
                 <motion.div
                   variants={itemVariants}
                   className="inline-flex items-center space-x-2 sm:space-x-3 bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200 px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 rounded-full text-sm sm:text-base lg:text-lg font-bold"
                 >
                   <Heart className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
-                  <span className="gradient-text">Your Premium Journey Awaits</span>
+                  <span className="text-primary-700 dark:text-primary-300 font-bold">Your Premium Journey Awaits</span>
                 </motion.div>
 
-                <motion.h1 
+                <motion.h1
                   variants={itemVariants}
                   className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-heading font-black leading-tight text-gray-900 dark:text-white max-w-6xl mx-auto"
                 >
                   Mansa-To-Mansa is where{' '}
-                  <span className="gradient-text">
+                  <span className="text-primary-600 dark:text-primary-400 font-black">
                     excellence meets opportunity
                   </span>
                   —and legends are born
@@ -496,9 +471,9 @@ export default function HomePage() {
 
                 <motion.p
                   variants={itemVariants}
-                  className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed font-light"
+                  className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 dark:text-gray-100 max-w-4xl mx-auto leading-relaxed font-normal"
                 >
-                  Join thousands of distinguished professionals and visionary leaders who are 
+                  Join thousands of distinguished professionals and visionary leaders who are
                   building bridges across continents, sharing expertise, and creating unprecedented impact together.
                 </motion.p>
 
@@ -517,7 +492,7 @@ export default function HomePage() {
                       key={index}
                       variants={itemVariants}
                       whileHover={{ scale: 1.05, y: -5 }}
-                      className="text-center p-4 sm:p-6 lg:p-8 card-enhanced group"
+                      className="text-center p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-lg hover:shadow-xl transition-all duration-300 group"
                     >
                       <motion.div
                         className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-r from-primary-100 to-secondary-100 dark:from-primary-900/30 dark:to-secondary-900/30 rounded-2xl sm:rounded-3xl mb-3 sm:mb-4 group-hover:animate-glow transition-all duration-300"
@@ -526,10 +501,10 @@ export default function HomePage() {
                       >
                         <stat.icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-primary-600 dark:text-primary-400" />
                       </motion.div>
-                      <div className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black gradient-text mb-2 sm:mb-3">
+                      <div className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-primary-600 dark:text-primary-400 mb-2 sm:mb-3">
                         {stat.number}
                       </div>
-                      <div className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-300 font-semibold leading-tight">
+                      <div className="text-xs sm:text-sm lg:text-base text-gray-700 dark:text-gray-100 font-semibold leading-tight">
                         {stat.label}
                       </div>
                     </motion.div>
@@ -548,7 +523,7 @@ export default function HomePage() {
                   >
                     <Link
                       href="/signup"
-                      className="group inline-flex items-center space-x-4 bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 hover:from-primary-700 hover:via-secondary-700 hover:to-accent-700 text-white px-12 py-6 rounded-full font-black text-xl shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden"
+                      className="group inline-flex items-center space-x-4 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 hover:from-blue-700 hover:via-blue-800 hover:to-blue-700 text-white px-12 py-6 rounded-full font-black text-xl shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden"
                     >
                       {/* Button shimmer effect */}
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
@@ -564,7 +539,7 @@ export default function HomePage() {
                     
                     {/* Premium glow effect */}
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-primary-400 via-secondary-400 to-accent-400 rounded-full opacity-40 blur-xl -z-10"
+                      className="absolute inset-0 bg-blue-500 rounded-full opacity-40 blur-xl -z-10"
                       animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.7, 0.4] }}
                       transition={{ duration: 3, repeat: Infinity }}
                     />

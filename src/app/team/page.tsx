@@ -63,13 +63,13 @@ export default function TeamPage() {
               
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-heading font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
                 The People Behind{' '}
-                <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+                <span className="text-primary-600 dark:text-primary-400 font-bold">
                   Our Mission
                 </span>
               </h1>
-              
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                Meet the passionate individuals driving our vision of connecting communities, 
+
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-700 dark:text-gray-100 max-w-3xl mx-auto font-normal">
+                Meet the passionate individuals driving our vision of connecting communities,
                 sharing knowledge, and creating lasting impact across Africa and beyond.
               </p>
             </motion.div>
@@ -93,7 +93,7 @@ export default function TeamPage() {
                   whileHover={{ y: -5, scale: 1.02 }}
                   className="group relative"
                 >
-                  <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 shadow-lg hover:shadow-2xl transition-all duration-300">
+                  <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl transition-all duration-300">
                     {/* Profile Image */}
                     <div className="relative mb-6">
                       <div className="w-24 h-24 mx-auto rounded-full overflow-hidden bg-gradient-to-r from-primary-100 to-secondary-100 dark:from-primary-900/30 dark:to-secondary-900/30 p-1">
@@ -175,7 +175,7 @@ export default function TeamPage() {
                 href="/signup"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center space-x-2 bg-white text-primary-600 px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                className="inline-flex items-center space-x-2 bg-white text-blue-600 hover:bg-gray-50 px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 <span>Get Involved</span>
               </motion.a>

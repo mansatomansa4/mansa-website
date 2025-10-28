@@ -31,22 +31,15 @@ const JoinProjectModal: React.FC<JoinModalProps> = ({ isOpen, onClose, projectTi
 
   const checkMembership = async (email: string): Promise<boolean> => {
     try {
-      // Dynamic import to avoid SSR issues
-      const { supabase } = await import('@/lib/supabase');
-      
-      // Check in the members table (where community members are stored)
-      const { data, error } = await supabase
-        .from('members')
-        .select('id, email')
-        .eq('email', email.toLowerCase())
-        .single();
+      const { api } = await import('@/lib/api');
+      const { data: verifyData, error: verifyError } = await api.verifyMemberEmail(email.toLowerCase());
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Membership check error:', error);
-        return false;
+      if (verifyError) {
+        console.error('Membership verification failed:', verifyError);
+        throw new Error('Unable to verify membership. Please try again.');
       }
 
-      return !!data;
+      return verifyData?.exists || false;
     } catch (error) {
       console.error('Membership check error:', error);
       return false;
@@ -55,22 +48,15 @@ const JoinProjectModal: React.FC<JoinModalProps> = ({ isOpen, onClose, projectTi
 
   const checkExistingApplication = async (email: string): Promise<boolean> => {
     try {
-      // Dynamic import to avoid SSR issues
-      const { supabase } = await import('@/lib/supabase');
-      
-      const { data, error } = await supabase
-        .from('project_applications')
-        .select('id, status, applied_date')
-        .eq('project_id', projectId)
-        .eq('applicant_email', email)
-        .single();
+      const { api } = await import('@/lib/api');
+      const { data: checkData, error: checkError } = await api.checkExistingApplication(projectId, email);
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Application check error:', error);
-        return false;
+      if (checkError) {
+        console.error('Application check failed:', checkError);
+        throw new Error('Unable to check existing applications. Please try again.');
       }
 
-      return !!data;
+      return checkData?.exists || false;
     } catch (error) {
       console.error('Application check error:', error);
       return false;
@@ -106,55 +92,22 @@ const JoinProjectModal: React.FC<JoinModalProps> = ({ isOpen, onClose, projectTi
         return;
       }
 
-      // Dynamic import to avoid SSR issues
-      const { supabase } = await import('@/lib/supabase');
-      
-      // Try using RPC function first, if it fails, use direct insert
-      try {
-        const { data, error } = await supabase.rpc('submit_project_application', {
-          p_project_id: projectId,
-          p_applicant_name: formData.name,
-          p_applicant_email: formData.email,
-          p_skills: formData.skills || null,
-          p_motivation: formData.motivation || null
-        });
+      // Submit application via backend API
+      const { api } = await import('@/lib/api');
+      const { data: submitData, error: submitError } = await api.submitProjectApplication({
+        project_id: projectId,
+        applicant_name: formData.name,
+        applicant_email: formData.email,
+        skills: formData.skills || undefined,
+        motivation: formData.motivation || undefined
+      });
 
-        if (error) {
-          console.warn('RPC function failed, trying direct insert:', error);
-          throw error;
-        }
-
-        if (data && !data.success) {
-          throw new Error(data.message || 'Application submission failed');
-        }
-
-        console.log('Application submitted successfully:', data);
-      } catch {
-        console.log('RPC failed, using direct database insert...');
-        
-        // Fallback to direct database insert
-        const { data, error } = await supabase
-          .from('project_applications')
-          .insert([
-            {
-              project_id: projectId,
-              applicant_name: formData.name,
-              applicant_email: formData.email,
-              skills: formData.skills || null,
-              motivation: formData.motivation || null,
-              status: 'pending',
-              applied_date: new Date().toISOString()
-            }
-          ])
-          .select();
-
-        if (error) {
-          console.error('Direct insert error:', error);
-          throw new Error(`Database error: ${error.message}`);
-        }
-
-        console.log('Application submitted successfully:', data);
+      if (submitError) {
+        console.error('Application submission failed:', submitError);
+        throw new Error(submitError);
       }
+
+      console.log('Application submitted successfully:', submitData);
 
       // Success
       setStep('success');
@@ -810,12 +763,50 @@ export default function ProjectsPage() {
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [activeTab, setActiveTab] = useState('future')
+  const [projects, setProjects] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [joinModal, setJoinModal] = useState<{isOpen: boolean; projectId: number; projectTitle: string}>({
     isOpen: false,
     projectId: 0,
     projectTitle: ''
   })
   const { theme } = useTheme()
+
+  // Fetch projects from API
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true)
+        const { api } = await import('@/lib/api')
+
+        // Fetch all projects (both active and future)
+        const { data, error: apiError } = await api.getPlatformProjects({
+          page: 1,
+        })
+
+        if (apiError) {
+          console.error('Error fetching projects:', apiError)
+          // Fallback to hardcoded data if API fails
+          const { futureProjects } = await import('@/constants/projectsData')
+          setProjects(futureProjects)
+          setError('Using cached data - API unavailable')
+        } else if (data?.results) {
+          setProjects(data.results)
+        }
+      } catch (err) {
+        console.error('Failed to fetch projects:', err)
+        // Fallback to hardcoded data
+        const { futureProjects } = await import('@/constants/projectsData')
+        setProjects(futureProjects)
+        setError('Using cached data')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProjects()
+  }, [])
 
   useEffect(() => {
     setMounted(true)
@@ -874,13 +865,13 @@ export default function ProjectsPage() {
             {/* Main Heading */}
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 leading-tight">
               Transforming Communities Through{' '}
-              <span className="bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-primary-600 dark:text-primary-400 font-bold">
                 Collaborative Innovation
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-4xl mx-auto mb-8">
+            <p className="text-xl text-gray-700 dark:text-gray-100 leading-relaxed max-w-4xl mx-auto mb-8 font-normal">
               Discover the ambitious projects that will shape the future of African communities worldwide. From innovative tech solutions to community-driven initiatives.
             </p>
           </div>
@@ -892,7 +883,7 @@ export default function ProjectsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Tab Navigation */}
           <div className="flex justify-center mb-16">
-            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl p-2 flex shadow-lg border border-gray-200/50 dark:border-gray-700/50">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-2 flex shadow-lg border border-gray-200 dark:border-gray-700">
               <button
                 onClick={() => setActiveTab('ongoing')}
                 className={`px-8 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
@@ -916,33 +907,71 @@ export default function ProjectsPage() {
             </div>
           </div>
 
+          {/* Loading State */}
+          {loading && (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">Loading projects...</p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !loading && (
+            <div className="text-center py-8">
+              <p className="text-yellow-600 dark:text-yellow-400 mb-4">{error}</p>
+            </div>
+          )}
+
           {/* Projects Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {activeTab === 'ongoing'
-              ? ongoingProjects.map((project) => (
-                  <EnhancedProjectCard
-                    key={project.id}
-                    project={project}
-                    onJoinClick={handleJoinClick}
-                  />
-                ))
-              : futureProjects.map((project) => (
-                  <EnhancedProjectCard
-                    key={project.id}
-                    project={project}
-                    isFuture={true}
-                    onJoinClick={handleJoinClick}
-                  />
-                ))
-            }
-          </div>
+          {!loading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              {activeTab === 'ongoing'
+                ? projects
+                    .filter((p) => p.status?.toLowerCase() === 'active' || p.status?.toLowerCase() === 'planning')
+                    .map((project) => (
+                      <EnhancedProjectCard
+                        key={project.id}
+                        project={{
+                          ...project,
+                          imageUrl: project.image_url,
+                          launchDate: project.launch_date,
+                          tags: project.domains || project.tags || []
+                        }}
+                        onJoinClick={handleJoinClick}
+                      />
+                    ))
+                : projects
+                    .filter((p) => p.status?.toLowerCase() === 'concept' || p.status?.toLowerCase() === 'planning')
+                    .map((project) => (
+                      <EnhancedProjectCard
+                        key={project.id}
+                        project={{
+                          ...project,
+                          imageUrl: project.image_url,
+                          launchDate: project.launch_date,
+                          tags: project.domains || project.tags || []
+                        }}
+                        isFuture={true}
+                        onJoinClick={handleJoinClick}
+                      />
+                    ))
+              }
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!loading && projects.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-600 dark:text-gray-400">No projects found.</p>
+            </div>
+          )}
 
           {/* Call to Action Section */}
           <div className="mt-16 sm:mt-20 text-center">
             <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
               Ready to Make an Impact?
             </h3>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-8 mx-auto max-w-2xl">
+            <p className="text-sm sm:text-base text-gray-700 dark:text-gray-100 mb-8 mx-auto max-w-2xl font-normal">
               Join our community and participate in multiple projects that will transform lives across Africa and beyond.
             </p>
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4">

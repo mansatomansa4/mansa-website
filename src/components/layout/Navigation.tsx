@@ -85,7 +85,7 @@ const Navigation = () => {
                 >
                   <Link
                     href={item.href}
-                    className="relative group flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200"
+                    className="relative group flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 transition-colors duration-200"
                   >
                     <item.icon className="w-4 h-4" />
                     <span className="font-medium">{item.label}</span>

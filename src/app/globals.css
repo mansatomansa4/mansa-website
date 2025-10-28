@@ -15,11 +15,11 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gradient-to-b from-primary-500 to-secondary-500 rounded-full;
+  @apply bg-primary-400 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply from-primary-600 to-secondary-600;
+  @apply bg-primary-500;
 }
 
 /* Smooth scrolling */
@@ -29,7 +29,7 @@ html {
 
 /* Selection styles */
 ::selection {
-  @apply bg-primary-200 text-primary-900;
+  @apply bg-brand-200 text-brand-900;
 }
 
 /* Focus styles */
@@ -38,7 +38,7 @@ html {
 }
 
 *:focus-visible {
-  @apply ring-2 ring-primary-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900;
+  @apply ring-2 ring-brand-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900;
 }
 
 /* Performance optimizations */
@@ -54,25 +54,25 @@ body {
 
 @layer components {
   .btn-primary {
-    @apply bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300;
+    @apply bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300;
   }
-  
+
   .btn-secondary {
-    @apply bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg hover:bg-white dark:hover:bg-gray-800 text-gray-900 dark:text-white px-6 py-3 rounded-full font-semibold border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300;
+    @apply bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white px-6 py-3 rounded-lg font-semibold border border-gray-300 dark:border-gray-600 shadow-sm hover:shadow-md transition-all duration-300;
   }
-  
+
   .card-enhanced {
-    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border border-white/30 dark:border-gray-700/30 shadow-2xl hover:shadow-3xl transition-all duration-500 rounded-3xl overflow-hidden;
+    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl overflow-hidden;
   }
-  
-  .gradient-text {
-    @apply bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 bg-clip-text text-transparent;
+
+  .text-brand {
+    @apply text-brand-600 dark:text-brand-400;
   }
-  
+
   .section-padding {
     @apply py-12 sm:py-16 lg:py-24;
   }
-  
+
   .container-enhanced {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }

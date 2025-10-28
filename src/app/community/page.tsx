@@ -74,20 +74,20 @@ export default function CommunityPage() {
               </motion.div>
 
               {/* Main Heading */}
-              <motion.h1 
+              <motion.h1
                 variants={itemVariants}
                 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 leading-tight"
               >
                 Grow Together,{' '}
-                <span className="bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="text-primary-600 dark:text-primary-400 font-bold">
                   Thrive Together
                 </span>
               </motion.h1>
 
               {/* Subtitle */}
-              <motion.p 
+              <motion.p
                 variants={itemVariants}
-                className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-4xl mx-auto mb-6 sm:mb-8"
+                className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-700 dark:text-gray-100 leading-relaxed max-w-4xl mx-auto mb-6 sm:mb-8 font-normal"
               >
                 Join a vibrant network of learners and leaders. At Mansa-to-Mansa, every member helps shape the future by sharing knowledge, support, and collaboration.
               </motion.p>
@@ -120,18 +120,18 @@ export default function CommunityPage() {
             >
               {/* Section Header */}
               <div className="text-center mb-16">
-                <motion.h2 
+                <motion.h2
                   variants={itemVariants}
                   className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6"
                 >
                   Community{' '}
-                  <span className="bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+                  <span className="text-primary-600 dark:text-primary-400 font-bold">
                     Circles
                   </span>
                 </motion.h2>
-                <motion.p 
+                <motion.p
                   variants={itemVariants}
-                  className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"
+                  className="text-xl text-gray-700 dark:text-gray-100 max-w-3xl mx-auto font-normal"
                 >
                   Connect with like-minded individuals in specialized communities focused on different areas of expertise and passion.
                 </motion.p>
@@ -159,16 +159,16 @@ export default function CommunityPage() {
                     <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-2xl blur-xl" 
                          style={{ background: `linear-gradient(135deg, ${circle.color.split(' ')[1]} 0%, ${circle.color.split(' ')[3]} 100%)` }}></div>
                     
-                    <div className="relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl p-8 border border-gray-200/50 dark:border-gray-700/50 shadow-lg hover:shadow-2xl transition-all duration-300 h-full">
+                    <div className="relative bg-white dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl transition-all duration-300 h-full">
                       <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r ${circle.color} rounded-2xl mb-6 shadow-lg`}>
                         <Sparkles className="w-8 h-8 text-white" />
                       </div>
-                      
+
                       <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                         {circle.title}
                       </h3>
-                      
-                      <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+
+                      <p className="text-gray-700 dark:text-gray-100 leading-relaxed font-normal">
                         {circle.subtitle}
                       </p>
                       

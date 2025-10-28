@@ -87,16 +87,16 @@ export default function AboutPage() {
               
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-heading font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
                 Empowering Student Success{' '}
-                <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+                <span className="text-primary-600 dark:text-primary-400 font-bold">
                   Through Global Connection
                 </span>
               </h1>
               
               <div className="max-w-5xl mx-auto space-y-6">
-                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-700 dark:text-gray-100 leading-relaxed font-normal">
                   Mansa-to-Mansa is a purposefully established global community addressing the critical need for mentorship and networking opportunities among African students, professionals, and the diaspora or people of African origin worldwide. Recognizing that Africans and people of African descent remain grossly underrepresented in most industries, especially in tech, we create pathways to success through impactful project or research collaborations, connections and peer-to-peer mentorship.
                 </p>
-                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 dark:text-gray-100 leading-relaxed font-normal">
                   Our name draws inspiration from the legendary Mansa Musa, symbolizing wisdom, leadership, and the transformative power of meaningful connections.
                 </p>
               </div>
@@ -119,7 +119,7 @@ export default function AboutPage() {
                 Why We Exist
               </h2>
               <div className="max-w-4xl mx-auto">
-                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-700 dark:text-gray-100 leading-relaxed font-normal">
                   In industries where African talent remains severely underrepresented, traditional networking and mentorship channels often fail to provide the culturally aware guidance and opportunities our community deserves. Mansa-to-Mansa bridges this gap by connecting African students and professionals with experienced leaders who understand both the unique challenges and immense potential within our global African diaspora.
                 </p>
               </div>
@@ -155,7 +155,7 @@ export default function AboutPage() {
                   variants={itemVariants}
                   className="group"
                 >
-                  <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-200/50 dark:border-gray-700/50 shadow-lg hover:shadow-2xl transition-all duration-300">
+                  <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 lg:p-8 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl transition-all duration-300">
                     <div className="flex items-start space-x-3 sm:space-x-6">
                       <div className="p-2 sm:p-3 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex-shrink-0">
                         <service.icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
@@ -164,7 +164,7 @@ export default function AboutPage() {
                         <h3 className="text-lg sm:text-xl lg:text-2xl font-heading font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">
                           {service.title}
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm sm:text-base lg:text-lg">
+                        <p className="text-gray-700 dark:text-gray-100 leading-relaxed text-sm sm:text-base lg:text-lg font-normal">
                           {service.description}
                         </p>
                       </div>
@@ -243,7 +243,7 @@ export default function AboutPage() {
                 Our Vision: Mansas Everywhere
               </h2>
               <div className="max-w-4xl mx-auto space-y-6">
-                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-700 dark:text-gray-100 leading-relaxed font-normal">
                   We&apos;re building toward an ambitious future where Mansas, our network of students, professionals, and mentors, are present in every major institution, industry, and city around the globe. Imagine a world where:
                 </p>
               </div>
@@ -262,10 +262,10 @@ export default function AboutPage() {
                   variants={itemVariants}
                   className="group"
                 >
-                  <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300">
                     <div className="flex items-start space-x-4">
                       <div className="w-3 h-3 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                      <p className="text-gray-700 dark:text-gray-100 leading-relaxed font-normal">
                         {example}
                       </p>
                     </div>
@@ -303,7 +303,7 @@ export default function AboutPage() {
                 Our Impact
               </h2>
               <div className="max-w-4xl mx-auto">
-                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-700 dark:text-gray-100 leading-relaxed font-normal">
                   We&apos;re intentionally working to increase African representation by ensuring our students and professionals have the mentorship, networks, and collaborative opportunities that have historically been less accessible. Every connection we facilitate, every project we support, and every mentorship we foster contributes to a more diverse and inclusive professional landscape globally.
                 </p>
               </div>
@@ -324,10 +324,10 @@ export default function AboutPage() {
                 Join the Movement
               </h2>
               <div className="space-y-6 mb-12">
-                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 dark:text-gray-100 leading-relaxed font-normal">
                   Whether you&apos;re seeking mentorship from industry leaders, looking to expand your professional network, ready to collaborate on meaningful projects, or wanting to connect with peers worldwide, Mansa-to-Mansa is your gateway to career success and personal growth.
                 </p>
-                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 dark:text-gray-100 leading-relaxed font-normal">
                   Together, we&apos;re not just building careers, we&apos;re creating a global community of empowered students and professionals who understand that success is amplified when we lift each other up.
                 </p>
                 <p className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -340,7 +340,7 @@ export default function AboutPage() {
                   href="/signup"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="inline-flex items-center space-x-2 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 hover:from-blue-700 hover:via-blue-800 hover:to-blue-700 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <span>Join Community</span>
                   <ArrowRight className="w-5 h-5" />
