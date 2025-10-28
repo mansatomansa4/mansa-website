@@ -16,40 +16,38 @@ export interface Project {
   // Core fields
   id: number;
   title: string;
-  description: string;
+  description?: string | null;
 
-  // Required metadata from meeting
-  objectives: string[];
-  expected_deliverables: string[];
-  focal_person: string;
-  focal_person_email?: string;
-
-  // Classification
-  domains: ProjectDomain[]; // Tags for grouping (CyberSecurity, AI, ML, BIOTECH, etc)
-  priority: ProjectPriority; // Priority based on resources available
-  status: ProjectStatus;
-
-  // Resources
-  resources: ProjectResource[]; // Human skills, platforms, devices, timeline
-  skills_required: string[]; // Specific skills needed
-
-  // Timeline
-  start_date?: string;
-  end_date?: string;
-  launch_date?: string;
-  duration?: string;
-
-  // Additional info
-  location: string;
-  participants?: string;
-  max_participants?: number;
-  current_participants?: number;
-  image_url?: string;
-  progress?: number;
-
-  // Timestamps
+  // Backend fields (actual API response)
+  status?: string | null;
+  location?: string | null;
+  launch_date?: string | null;
+  image_url?: string | null;
+  project_type?: string | null;
+  tags?: string[] | null;
+  participants_count?: number | null;
+  max_participants?: number | null;
   created_at: string;
-  updated_at?: string;
+  updated_at?: string | null;
+  member_id?: string | null;
+
+  // Enhanced metadata fields
+  objectives?: string | null;
+  deliverables?: string | null;
+  focal_person_id?: string | null;
+  focal_person_name?: string | null;
+  focal_person_email?: string | null;
+  domain_tags?: string[] | null;
+  priority?: string | null;
+  resources_needed?: any | null;
+  human_skills_required?: string | null;
+  platform_requirements?: string | null;
+  devices_required?: string | null;
+  timeline_start?: string | null;
+  timeline_end?: string | null;
+  budget_estimate?: string | null;
+  current_budget?: string | null;
+  is_concurrent?: boolean;
 }
 
 export type FutureProject = Project;

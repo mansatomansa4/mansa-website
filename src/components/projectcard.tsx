@@ -24,9 +24,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFuture = false }) 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <div className="relative h-48">
-        {project.imageUrl && (
+        {project.image_url && (
           <Image
-            src={project.imageUrl}
+            src={project.image_url}
             alt={project.title}
             fill
             className="object-cover"
@@ -63,10 +63,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFuture = false }) 
         )}
         
         <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-          {project.participants && (
+          {project.participants_count !== undefined && project.participants_count !== null && (
             <div className="flex items-center">
               <IoPeopleOutline className="mr-2" />
-              <span>{project.participants} participants</span>
+              <span>{project.participants_count} participants</span>
             </div>
           )}
           {project.location && (
@@ -75,31 +75,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFuture = false }) 
               <span>{project.location}</span>
             </div>
           )}
-          <div className="flex items-center">
-            <IoCalendarOutline className="mr-2" />
-            <span>
-              {isFuture 
-                ? `Launch: ${(project as FutureProject).launchDate}` 
-                : (project as Project).duration || (project as Project).date
-              }
-            </span>
-          </div>
+          {project.launch_date && (
+            <div className="flex items-center">
+              <IoCalendarOutline className="mr-2" />
+              <span>
+                {isFuture ? `Launch: ${project.launch_date}` : project.launch_date}
+              </span>
+            </div>
+          )}
         </div>
-        
-        {!isFuture && (project as Project).progress && (
-          <div className="mt-4">
-            <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
-              <span>Progress</span>
-              <span>{(project as Project).progress}%</span>
-            </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div 
-                className="bg-[#3FB950] h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(project as Project).progress}%` }}
-              ></div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

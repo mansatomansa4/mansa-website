@@ -27,39 +27,28 @@ const FutureImpactStats: React.FC = () => {
           return;
         }
 
-        // Dynamic import to avoid SSR issues
-        const { supabase } = await import('@/lib/supabase');
-        
-        // Fetch members count for expected participants
-        const { data: membersData, error: membersError } = await supabase
-          .from('members')
-          .select('id, country');
+        // Use API client to fetch members data
+        const { api } = await import('@/lib/api');
 
-        // Fetch project applications count
-        const { data: applicationsData, error: applicationsError } = await supabase
-          .from('project_applications')
-          .select('id, applicant_email');
+        // Fetch members count for expected participants
+        const { data: membersResponse, error: membersError } = await api.getPlatformMembers({ page: 1 });
 
         if (membersError) {
           console.warn('Could not fetch members data:', membersError);
         }
 
-        if (applicationsError) {
-          console.warn('Could not fetch applications data:', applicationsError);
-        }
+        const membersData = membersResponse?.results || [];
+        const totalMembers = membersResponse?.count || 0;
 
         // Calculate unique countries from members data
-        const uniqueCountries = membersData 
+        const uniqueCountries = membersData
           ? new Set(membersData.filter(member => member.country).map(member => member.country)).size
           : 6;
-
-        // Calculate total community size + applications
-        const totalParticipants = (membersData?.length || 0) + (applicationsData?.length || 0);
 
         // Update stats with real data where available
         setStats(prevStats => ({
           ...prevStats,
-          expectedParticipants: Math.max(totalParticipants, 90), // At least 90
+          expectedParticipants: Math.max(totalMembers, 90), // At least 90
           countriesToImpact: Math.max(uniqueCountries, 6), // At least 6 countries
         }));
 

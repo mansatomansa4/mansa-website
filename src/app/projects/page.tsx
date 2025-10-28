@@ -685,7 +685,7 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({ project, isFu
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 group h-full flex flex-col">
       <div className="relative h-48 overflow-hidden">
         <Image
-          src={project.imageUrl || '/cardimage1.png'}
+          src={project.image_url || '/cardimage1.png'}
           alt={project.title}
           width={400}
           height={300}
@@ -718,14 +718,14 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({ project, isFu
             </span>
             <span className="text-gray-900 dark:text-white font-medium">{project.location}</span>
           </div>
-          {(project.launchDate || project.duration) && (
+          {project.launch_date && (
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-500 dark:text-gray-400 flex items-center">
                 <IoCalendar className="mr-1" size={14} />
                 {isFuture ? 'Launch:' : 'Duration:'}
               </span>
               <span className="text-gray-900 dark:text-white font-medium">
-                {isFuture ? project.launchDate : project.duration}
+                {project.launch_date}
               </span>
             </div>
           )}
@@ -931,12 +931,7 @@ export default function ProjectsPage() {
                     .map((project) => (
                       <EnhancedProjectCard
                         key={project.id}
-                        project={{
-                          ...project,
-                          imageUrl: project.image_url,
-                          launchDate: project.launch_date,
-                          tags: project.domains || project.tags || []
-                        }}
+                        project={project}
                         onJoinClick={handleJoinClick}
                       />
                     ))
@@ -945,12 +940,7 @@ export default function ProjectsPage() {
                     .map((project) => (
                       <EnhancedProjectCard
                         key={project.id}
-                        project={{
-                          ...project,
-                          imageUrl: project.image_url,
-                          launchDate: project.launch_date,
-                          tags: project.domains || project.tags || []
-                        }}
+                        project={project}
                         isFuture={true}
                         onJoinClick={handleJoinClick}
                       />

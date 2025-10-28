@@ -70,13 +70,13 @@ export default function BecomeMemberForm() {
       gender,
     };
 
-    // Dynamic import to avoid SSR issues
-    const { supabase } = await import('@/lib/supabase');
-    const { error: insertError } = await supabase.from('members').insert([submissionData]);
+    // Use API client to submit member application
+    const { api } = await import('@/lib/api');
+    const { error: apiError } = await api.submitMemberApplication(submissionData);
 
-    if (insertError) {
-      console.error('Insert error:', insertError);
-      setError(insertError.message || 'Something went wrong. Please try again.');
+    if (apiError) {
+      console.error('API error:', apiError);
+      setError(apiError || 'Something went wrong. Please try again.');
     } else {
       setFormData(initialFormState);
       setMembershipType('');
