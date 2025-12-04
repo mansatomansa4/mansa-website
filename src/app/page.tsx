@@ -408,7 +408,7 @@ export default function HomePage() {
               <motion.div variants={itemVariants}>
                 <NetworkCard 
                   text='Join a global network where connection, growth, and mentorship begins'
-                  imageUrl='/kannect 1.png'
+                  imageUrl='/learn2.jpeg'
                 />
               </motion.div>
             </div>
@@ -417,7 +417,7 @@ export default function HomePage() {
               <motion.div variants={itemVariants}>
                 <NetworkCard 
                   text='Together we learn, together we excel'
-                  imageUrl='/Frame 29.png'
+                  imageUrl='/together.jpg'
                 />
               </motion.div>
 
@@ -523,7 +523,7 @@ export default function HomePage() {
                   >
                     <Link
                       href="/signup"
-                      className="group inline-flex items-center space-x-4 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 hover:from-blue-700 hover:via-blue-800 hover:to-blue-700 text-white px-12 py-6 rounded-full font-black text-xl shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden"
+                      className="group inline-flex items-center space-x-2 sm:space-x-3 lg:space-x-4 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 hover:from-blue-700 hover:via-blue-800 hover:to-blue-700 text-white px-6 py-3 sm:px-8 sm:py-4 lg:px-12 lg:py-6 rounded-full font-black text-base sm:text-lg lg:text-xl shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden"
                     >
                       {/* Button shimmer effect */}
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
@@ -533,7 +533,7 @@ export default function HomePage() {
                         transition={{ duration: 2, repeat: Infinity }}
                         className="relative z-10"
                       >
-                        <ArrowRight className="w-7 h-7" />
+                        <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
                       </motion.div>
                     </Link>
                     
