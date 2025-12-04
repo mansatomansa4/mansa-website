@@ -71,7 +71,7 @@ export default function MansaFundsPage() {
             transition={{ delay: 0.6 }}
             className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed mb-12"
           >
-            We're preparing something special to support innovative projects and empower our community.
+            We&apos;re preparing something special to support innovative projects and empower our community.
             Stay tuned for updates.
           </motion.p>
 
