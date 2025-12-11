@@ -1,5 +1,5 @@
 // API Client for Django Backend
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://mansa-backend-1rr8.onrender.com/api';
 
 interface ApiResponse<T = any> {
   data?: T;
