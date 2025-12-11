@@ -26,20 +26,43 @@ class ApiClient {
     };
 
     try {
+      console.log('Making API request to:', url);
+      
       const response = await fetch(url, {
         ...options,
         headers,
+        mode: 'cors',
+        credentials: 'omit',
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        return { error: data.detail || data.message || 'Request failed' };
+      const contentType = response.headers.get('content-type');
+      let data;
+      
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        console.error('Non-JSON response:', text);
+        return { error: 'Server returned invalid response' };
       }
 
+      if (!response.ok) {
+        console.error('API error response:', data);
+        return { 
+          error: data.detail || data.message || data.error || JSON.stringify(data) || 'Request failed',
+          detail: data.detail 
+        };
+      }
+
+      console.log('API request successful:', data);
       return { data };
     } catch (error) {
       console.error('API request failed:', error);
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        return { 
+          error: 'Unable to connect to server. Please check if the backend is running or try again later.' 
+        };
+      }
       return { error: error instanceof Error ? error.message : 'Network error' };
     }
   }
