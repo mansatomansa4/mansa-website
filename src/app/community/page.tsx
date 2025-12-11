@@ -20,7 +20,7 @@ export default function CommunityPage() {
           <div className="absolute inset-0">
             {/* Animated Background Shapes */}
             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-emerald-200/30 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl animate-pulse animate-delay-2s"></div>
             
             {/* Grid Pattern */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)]"></div>
@@ -127,8 +127,7 @@ export default function CommunityPage() {
                   whileTap={{ scale: 0.98 }}
                   className="group relative"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-2xl blur-xl"
-                       style={{ background: `linear-gradient(135deg, ${circle.color.split(' ')[1]} 0%, ${circle.color.split(' ')[3]} 100%)` }}></div>
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-2xl blur-xl"></div>
 
                   <div className="relative bg-white dark:bg-gray-900 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl transition-all duration-300 h-full">
                     <div className={`inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-r ${circle.color} rounded-xl sm:rounded-2xl mb-4 sm:mb-6 shadow-lg`}>

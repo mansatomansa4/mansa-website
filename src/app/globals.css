@@ -47,6 +47,11 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Animation delay utilities */
+.animate-delay-2s {
+  animation-delay: 2s;
+}
+
 /* Prevent flash of unstyled content */
 body {
   @apply transition-colors duration-300;

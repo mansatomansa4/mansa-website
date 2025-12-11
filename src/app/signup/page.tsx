@@ -448,6 +448,8 @@ export default function SignupPage() {
                             value={membershipType}
                             onChange={(e) => setMembershipType(e.target.value)}
                             className="w-full px-4 py-3 sm:py-4 text-sm sm:text-base rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all duration-300"
+                            name="membershipType"
+                            aria-label="Membership Type"
                             required
                           >
                             <option value="">Select membership type</option>
@@ -465,6 +467,8 @@ export default function SignupPage() {
                             value={gender}
                             onChange={(e) => setGender(e.target.value)}
                             className="w-full px-4 py-3 sm:py-4 text-sm sm:text-base rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all duration-300"
+                            name="gender"
+                            aria-label="Gender"
                             required
                           >
                             <option value="">Select gender</option>
@@ -693,6 +697,7 @@ export default function SignupPage() {
                 <button
                   className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                   onClick={() => setShowModal(false)}
+                  aria-label="Close modal"
                 >
                   <IoClose className="w-6 h-6" />
                 </button>

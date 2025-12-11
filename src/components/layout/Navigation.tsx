@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
-import { Menu, X, Sun, Moon, Users, BookOpen, Heart, Briefcase, DollarSign, Facebook, Twitter, Instagram, Linkedin, ChevronDown, Github, FileText, Cpu, List } from 'lucide-react'
+import { Menu, X, Sun, Moon, Users, BookOpen, Heart, Briefcase, DollarSign, Facebook, Twitter, Instagram, Linkedin, ChevronDown, Github, FileText, Cpu, List, Calendar, Rocket } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const Navigation = () => {
@@ -54,6 +54,20 @@ const Navigation = () => {
       label: 'Community',
       icon: Heart,
       description: 'Join our vibrant community',
+      isExternal: false
+    },
+    {
+      href: '/community/events',
+      label: 'Events',
+      icon: Calendar,
+      description: 'Upcoming and past community events',
+      isExternal: false
+    },
+    {
+      href: '/community/incubator',
+      label: 'Mansa Incubator',
+      icon: Rocket,
+      description: 'Coming Soon',
       isExternal: false
     },
     {
@@ -315,6 +329,7 @@ const Navigation = () => {
                   <button
                     onClick={() => setIsOpen(false)}
                     className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    aria-label="Close menu"
                   >
                     <X className="w-6 h-6" />
                   </button>
