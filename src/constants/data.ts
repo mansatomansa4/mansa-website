@@ -101,7 +101,7 @@ const teamMembers = [
     id: 12,
     name: "Wuni Abdulai",
     position: "Mentorship Coordinator",
-    image: "/wuni2.jpg",
+    image: "/wunipic.png",
     socialLinks: {
       linkedin: "https://linkedin.com/in/wuni-abdulai-2524052a7",
     },

@@ -1,5 +1,8 @@
 import { Project, FutureProject } from '@/types/projects'
 
+// Supabase storage base URL for project images
+const SUPABASE_STORAGE_URL = 'https://adnteftmqytcnieqmlma.supabase.co/storage/v1/object/public/project-images'
+
 export const ongoingProjects: Project[] = [];
 
 export const futureProjects: FutureProject[] = [
@@ -10,7 +13,7 @@ export const futureProjects: FutureProject[] = [
     status: "Concept",
     location: "Multi-country",
     launch_date: "Q3 2025",
-    image_url: "/ai.jpeg",
+    image_url: `${SUPABASE_STORAGE_URL}/ai.jpeg`,
     tags: ["AI", "Research", "Innovation"],
     created_at: new Date().toISOString()
   },
@@ -21,7 +24,7 @@ export const futureProjects: FutureProject[] = [
     status: "Concept",
     location: "Continental",
     launch_date: "Q2 2026",
-    image_url: "/library2.jpeg",
+    image_url: `${SUPABASE_STORAGE_URL}/library2.jpeg`,
     tags: ["Education", "Digital", "Literature"],
     created_at: new Date().toISOString()
   },
@@ -32,7 +35,7 @@ export const futureProjects: FutureProject[] = [
     status: "Planning",
     location: "Ghana",
     launch_date: "Q3 2025",
-    image_url: "/census3.jpeg",
+    image_url: `${SUPABASE_STORAGE_URL}/census3.jpeg`,
     tags: ["Data Visualization", "Census", "Analytics"],
     created_at: new Date().toISOString()
   },
@@ -43,7 +46,7 @@ export const futureProjects: FutureProject[] = [
     status: "Concept",
     location: "Pan-African",
     launch_date: "Q4 2025",
-    image_url: "/election2.jpeg",
+    image_url: `${SUPABASE_STORAGE_URL}/election2.jpeg`,
     tags: ["Democracy", "Elections", "Civic Tech"],
     created_at: new Date().toISOString()
   },
@@ -54,7 +57,7 @@ export const futureProjects: FutureProject[] = [
     status: "Planning",
     location: "Ghana",
     launch_date: "Q2 2025",
-    image_url: "/job2.jpeg",
+    image_url: `${SUPABASE_STORAGE_URL}/job2.jpeg`,
     tags: ["Employment", "Students", "Career"],
     created_at: new Date().toISOString()
   },
@@ -65,7 +68,7 @@ export const futureProjects: FutureProject[] = [
     status: "Planning",
     location: "Ghana",
     launch_date: "Q3 2025",
-    image_url: "/mapping.jpeg",
+    image_url: `${SUPABASE_STORAGE_URL}/mapping.jpeg`,
     tags: ["Water Resources", "GIS", "Environment"],
     created_at: new Date().toISOString()
   },
@@ -76,7 +79,7 @@ export const futureProjects: FutureProject[] = [
     status: "Concept",
     location: "Ghana",
     launch_date: "Q4 2025",
-    image_url: "/map.jpeg",
+    image_url: `${SUPABASE_STORAGE_URL}/map.jpeg`,
     tags: ["GPS", "Addressing", "Urban Planning"],
     created_at: new Date().toISOString()
   },
@@ -87,7 +90,7 @@ export const futureProjects: FutureProject[] = [
     status: "Planning",
     location: "Major African Cities",
     launch_date: "Q2 2026",
-    image_url: "/mobility.jpg",
+    image_url: `${SUPABASE_STORAGE_URL}/mobility.jpg`,
     tags: ["Mobility", "Analytics", "Urban Planning"],
     created_at: new Date().toISOString()
   },
@@ -98,7 +101,7 @@ export const futureProjects: FutureProject[] = [
     status: "Concept",
     location: "Ghana",
     launch_date: "Q1 2025",
-    image_url: "/vendors.jpg",
+    image_url: `${SUPABASE_STORAGE_URL}/vendors.jpg`,
     tags: ["Local Business", "Directory", "Commerce"],
     created_at: new Date().toISOString()
   },
@@ -109,7 +112,7 @@ export const futureProjects: FutureProject[] = [
     status: "Planning",
     location: "Ghana",
     launch_date: "Q3 2025",
-    image_url: "/disease.jpeg",
+    image_url: `${SUPABASE_STORAGE_URL}/disease.jpeg`,
     tags: ["Health", "Disease Monitoring", "Public Health"],
     created_at: new Date().toISOString()
   },
@@ -120,7 +123,7 @@ export const futureProjects: FutureProject[] = [
     status: "Concept",
     location: "Ghana",
     launch_date: "Q4 2025",
-    image_url: "/drugs.jpg",
+    image_url: `${SUPABASE_STORAGE_URL}/drugs.jpg`,
     tags: ["Healthcare", "Drug Safety", "QR Scanner"],
     created_at: new Date().toISOString()
   },
@@ -131,7 +134,7 @@ export const futureProjects: FutureProject[] = [
     status: "Planning",
     location: "Continental",
     launch_date: "Q2 2026",
-    image_url: "/africa.jpeg",
+    image_url: `${SUPABASE_STORAGE_URL}/africa.jpeg`,
     tags: ["History", "Education", "Cultural Heritage"],
     created_at: new Date().toISOString()
   },
@@ -142,7 +145,7 @@ export const futureProjects: FutureProject[] = [
     status: "Concept",
     location: "Global",
     launch_date: "Q1 2026",
-    image_url: "/archive.jpeg",
+    image_url: `${SUPABASE_STORAGE_URL}/archive.jpeg`,
     tags: ["Knowledge Sharing", "Academic", "Community"],
     created_at: new Date().toISOString()
   },
@@ -153,7 +156,7 @@ export const futureProjects: FutureProject[] = [
     status: "Planning",
     location: "Ghana",
     launch_date: "Q3 2025",
-    image_url: "/SECURITY.jpeg",
+    image_url: `${SUPABASE_STORAGE_URL}/SECURITY.jpeg`,
     tags: ["IoT", "Computer Vision", "Security"],
     created_at: new Date().toISOString()
   }

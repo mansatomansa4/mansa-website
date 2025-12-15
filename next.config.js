@@ -20,6 +20,8 @@ const nextConfig = {
         hostname: 'adnteftmqytcnieqmlma.supabase.co',
       },
     ],
+    domains: [],
+    // Don't use loader for local images
     unoptimized: false,
   },
   experimental: {

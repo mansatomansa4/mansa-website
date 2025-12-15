@@ -8,7 +8,7 @@ import { IoMenu, IoClose, IoRocketSharp, IoPersonAdd, IoCheckmarkCircle, IoWarni
 import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import { useTheme } from 'next-themes'
-import { futureProjects, ongoingProjects } from '@/constants/projectsData'
+import { api, Project as ApiProject } from '@/lib/supabase-api'
 import { Project } from '@/types/projects'
 
 interface JoinModalProps {
@@ -31,7 +31,6 @@ const JoinProjectModal: React.FC<JoinModalProps> = ({ isOpen, onClose, projectTi
 
   const checkMembership = async (email: string): Promise<boolean> => {
     try {
-      const { api } = await import('@/lib/api');
       const { data: verifyData, error: verifyError } = await api.verifyMemberEmail(email.toLowerCase());
 
       if (verifyError) {
@@ -48,7 +47,6 @@ const JoinProjectModal: React.FC<JoinModalProps> = ({ isOpen, onClose, projectTi
 
   const checkExistingApplication = async (email: string): Promise<boolean> => {
     try {
-      const { api } = await import('@/lib/api');
       const { data: checkData, error: checkError } = await api.checkExistingApplication(projectId, email);
 
       if (checkError) {
@@ -93,7 +91,6 @@ const JoinProjectModal: React.FC<JoinModalProps> = ({ isOpen, onClose, projectTi
       }
 
       // Submit application via backend API
-      const { api } = await import('@/lib/api');
       const { data: submitData, error: submitError } = await api.submitProjectApplication({
         project_id: projectId,
         applicant_name: formData.name,
@@ -178,7 +175,7 @@ const JoinProjectModal: React.FC<JoinModalProps> = ({ isOpen, onClose, projectTi
           {/* Premium Background Effects */}
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-white/30 to-cyan-50/50 dark:from-emerald-950/30 dark:via-gray-900/50 dark:to-cyan-950/30 rounded-2xl -z-10"></div>
           <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 rounded-full blur-2xl animate-pulse -z-10"></div>
-          <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-br from-teal-400/20 to-blue-400/20 rounded-full blur-2xl animate-pulse -z-10" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-br from-teal-400/20 to-blue-400/20 rounded-full blur-2xl animate-pulse -z-10 [animation-delay:2s]"></div>
           
           {/* Floating Particles */}
           <motion.div
@@ -295,7 +292,7 @@ const JoinProjectModal: React.FC<JoinModalProps> = ({ isOpen, onClose, projectTi
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6 }}
               >
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center space-x-2">
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center space-x-2">
                   <IoPersonAdd className="w-4 h-4 text-emerald-500" />
                   <span>Full Name *</span>
                 </label>
@@ -323,7 +320,7 @@ const JoinProjectModal: React.FC<JoinModalProps> = ({ isOpen, onClose, projectTi
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.7 }}
               >
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center space-x-2">
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center space-x-2">
                   <IoGlobe className="w-4 h-4 text-emerald-500" />
                   <span>Email Address *</span>
                 </label>
@@ -351,7 +348,7 @@ const JoinProjectModal: React.FC<JoinModalProps> = ({ isOpen, onClose, projectTi
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.8 }}
               >
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center space-x-2">
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center space-x-2">
                   <IoSettings className="w-4 h-4 text-emerald-500" />
                   <span>Relevant Skills</span>
                 </label>
@@ -378,7 +375,7 @@ const JoinProjectModal: React.FC<JoinModalProps> = ({ isOpen, onClose, projectTi
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.9 }}
               >
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center space-x-2">
+                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center space-x-2">
                   <IoRocketSharp className="w-4 h-4 text-emerald-500" />
                   <span>Why do you want to join this project?</span>
                 </label>
@@ -763,7 +760,8 @@ export default function ProjectsPage() {
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [activeTab, setActiveTab] = useState('future')
-  const [projects, setProjects] = useState<any[]>([])
+  const [futureProjects, setFutureProjects] = useState<ApiProject[]>([])
+  const [ongoingProjects, setOngoingProjects] = useState<ApiProject[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [joinModal, setJoinModal] = useState<{isOpen: boolean; projectId: number; projectTitle: string}>({
@@ -773,33 +771,30 @@ export default function ProjectsPage() {
   })
   const { theme } = useTheme()
 
-  // Fetch projects from API
+  // Fetch projects from Supabase API
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         setLoading(true)
-        const { api } = await import('@/lib/api')
+        setError(null)
 
-        // Fetch all projects (both active and future)
-        const { data, error: apiError } = await api.getPlatformProjects({
-          page: 1,
-        })
+        // Fetch both future and ongoing projects
+        const { data, error: apiError } = await api.getAllProjects()
 
         if (apiError) {
           console.error('Error fetching projects:', apiError)
-          // Fallback to hardcoded data if API fails
-          const { futureProjects } = await import('@/constants/projectsData')
-          setProjects(futureProjects)
-          setError('Using cached data - API unavailable')
-        } else if (data?.results) {
-          setProjects(data.results)
+          setError('Failed to load projects. Please try again later.')
+          setFutureProjects([])
+          setOngoingProjects([])
+        } else if (data) {
+          setFutureProjects(data.future || [])
+          setOngoingProjects(data.ongoing || [])
         }
       } catch (err) {
         console.error('Failed to fetch projects:', err)
-        // Fallback to hardcoded data
-        const { futureProjects } = await import('@/constants/projectsData')
-        setProjects(futureProjects)
-        setError('Using cached data')
+        setError('Failed to load projects. Please try again later.')
+        setFutureProjects([])
+        setOngoingProjects([])
       } finally {
         setLoading(false)
       }
@@ -848,7 +843,7 @@ export default function ProjectsPage() {
           <div className="absolute inset-0">
             {/* Animated Background Shapes */}
             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-emerald-200/30 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl animate-pulse [animation-delay:2s]"></div>
             
             {/* Grid Pattern */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)]"></div>
@@ -926,18 +921,14 @@ export default function ProjectsPage() {
           {!loading && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {activeTab === 'ongoing'
-                ? projects
-                    .filter((p) => p.status?.toLowerCase() === 'active' || p.status?.toLowerCase() === 'planning')
-                    .map((project) => (
+                ? ongoingProjects.map((project: any) => (
                       <EnhancedProjectCard
                         key={project.id}
                         project={project}
                         onJoinClick={handleJoinClick}
                       />
                     ))
-                : projects
-                    .filter((p) => p.status?.toLowerCase() === 'concept' || p.status?.toLowerCase() === 'planning')
-                    .map((project) => (
+                : futureProjects.map((project: any) => (
                       <EnhancedProjectCard
                         key={project.id}
                         project={project}
@@ -950,9 +941,16 @@ export default function ProjectsPage() {
           )}
 
           {/* Empty State */}
-          {!loading && projects.length === 0 && (
+          {!loading && activeTab === 'future' && futureProjects.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-600 dark:text-gray-400">No projects found.</p>
+              <p className="text-gray-600 dark:text-gray-400">No future projects available at the moment.</p>
+            </div>
+          )}
+
+          {/* Empty State for Ongoing */}
+          {!loading && activeTab === 'ongoing' && ongoingProjects.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-600 dark:text-gray-400">No ongoing projects at the moment.</p>
             </div>
           )}
 

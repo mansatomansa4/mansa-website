@@ -59,7 +59,7 @@ const HeroSection = () => {
           onTimeUpdate={handleTimeUpdate}
           className="video-background"
         >
-          <source src="/videos/mansa-video2.mp4" type="video/mp4" />
+          <source src="/videos/mansa-vid.mp4" type="video/mp4" />
         </video>
 
         {/* Minimal overlay for text readability only */}

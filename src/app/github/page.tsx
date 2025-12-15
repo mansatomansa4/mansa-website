@@ -38,7 +38,7 @@ export default function GitHubPage() {
       stars: 12,
       forks: 5,
       topics: ['nextjs', 'typescript', 'tailwindcss', 'framer-motion'],
-      url: 'https://github.com/mansatomansa/mansa-website'
+      url: 'https://github.com/mansatomansa-a11y/mansa-website'
     },
     {
       name: 'mansa-dashboard',
@@ -48,7 +48,7 @@ export default function GitHubPage() {
       stars: 8,
       forks: 3,
       topics: ['react', 'dashboard', 'shadcn-ui', 'supabase'],
-      url: 'https://github.com/mansatomansa/mansa-dashboard'
+      url: 'https://github.com/mansatomansa-a11y/mansa-dashboard'
     },
     {
       name: 'mansa-api',
@@ -58,7 +58,7 @@ export default function GitHubPage() {
       stars: 6,
       forks: 2,
       topics: ['django', 'python', 'rest-api', 'postgresql'],
-      url: 'https://github.com/mansatomansa/mansa-api'
+      url: 'https://github.com/mansatomansa-a11y/mansa-api'
     },
     {
       name: 'mansa-mobile',
@@ -67,8 +67,8 @@ export default function GitHubPage() {
       languageColor: '#00B4AB',
       stars: 4,
       forks: 1,
-      topics: ['flutter', 'dart', 'mobile', 'cross-platform'],
-      url: 'https://github.com/mansatomansa/mansa-mobile'
+      topics: ['react-native',  'mobile', 'cross-platform'],
+      url: 'https://github.com/mansatomansa-a11y/mansa-mobile'
     },
     {
       name: 'ai-mentorship-matcher',
@@ -78,7 +78,7 @@ export default function GitHubPage() {
       stars: 15,
       forks: 7,
       topics: ['machine-learning', 'python', 'mentorship', 'ai'],
-      url: 'https://github.com/mansatomansa/ai-mentorship-matcher'
+      url: 'https://github.com/mansatomansa-a11y/ai-mentorship-matcher'
     },
     {
       name: 'community-projects-hub',
@@ -88,13 +88,13 @@ export default function GitHubPage() {
       stars: 10,
       forks: 4,
       topics: ['nodejs', 'javascript', 'collaboration', 'open-source'],
-      url: 'https://github.com/mansatomansa/community-projects-hub'
+      url: 'https://github.com/mansatomansa-a11y/community-projects-hub'
     }
   ]
 
   const stats = [
-    { label: 'Public Repositories', value: '12+', icon: Folder },
-    { label: 'Contributors', value: '50+', icon: Users },
+    { label: 'Public Repositories', value: '6+', icon: Folder },
+    { label: 'Contributors', value: '20+', icon: Users },
     { label: 'Total Stars', value: '100+', icon: Star },
     { label: 'Active Projects', value: '6', icon: Activity }
   ]
@@ -113,7 +113,7 @@ export default function GitHubPage() {
     {
       title: 'Mobile Development',
       description: 'Build cross-platform mobile experiences with Flutter and Dart.',
-      skills: ['Flutter', 'Dart', 'iOS', 'Android']
+      skills: ['Flutter', 'React ', 'iOS', 'Android']
     },
     {
       title: 'AI & Machine Learning',
@@ -153,7 +153,7 @@ export default function GitHubPage() {
               </p>
 
               <motion.a
-                href="https://github.com/mansatomansa"
+                href="https://github.com/mansatomansa-a11y"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05 }}
@@ -261,7 +261,7 @@ export default function GitHubPage() {
                     <div className="flex items-center space-x-1">
                       <span
                         className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: repo.languageColor }}
+                        style={{ backgroundColor: repo.languageColor || '#666' }}
                       ></span>
                       <span>{repo.language}</span>
                     </div>
@@ -361,7 +361,7 @@ export default function GitHubPage() {
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <motion.a
-                  href="https://github.com/mansatomansa"
+                  href="https://github.com/mansatomansa-a11y"
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05 }}
