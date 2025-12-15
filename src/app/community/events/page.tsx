@@ -44,8 +44,8 @@ export default function EventsPage() {
     try {
       setLoading(true)
       // Fetch events from backend API
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
-      const response = await fetch(`${apiUrl}/api/events/?published=true`)
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'
+      const response = await fetch(`${apiBaseUrl}/events/?published=true`)
       
       if (response.ok) {
         const data = await response.json()
