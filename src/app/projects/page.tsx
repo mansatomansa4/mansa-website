@@ -682,7 +682,7 @@ const EnhancedProjectCard: React.FC<EnhancedProjectCardProps> = ({ project, isFu
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 group h-full flex flex-col">
       <div className="relative h-48 overflow-hidden">
         <Image
-          src={project.image_url || '/cardimage1.png'}
+          src={project.image || '/cardimage1.png'}
           alt={project.title}
           width={400}
           height={300}
