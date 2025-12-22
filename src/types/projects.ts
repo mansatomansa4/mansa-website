@@ -23,6 +23,7 @@ export interface Project {
   location?: string | null;
   launch_date?: string | null;
   image_url?: string | null;
+  image?: string | null; // Transformed full URL from API
   project_type?: string | null;
   tags?: string[] | null;
   participants_count?: number | null;
