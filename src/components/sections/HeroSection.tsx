@@ -189,7 +189,7 @@ const HeroSection = () => {
           {/* Professional Badge */}
           <motion.div
             variants={itemVariants}
-            className="inline-flex items-center space-x-1 sm:space-x-2 bg-black/60 backdrop-blur-md text-white px-2 sm:px-4 md:px-6 py-1 sm:py-2 md:py-3 rounded-full text-[9px] xs:text-xs sm:text-sm font-semibold mb-2 sm:mb-6 md:mb-8 border border-white/30 shadow-2xl"
+            className="inline-flex items-center space-x-1 sm:space-x-2 bg-black/60 backdrop-blur-md text-white px-2 sm:px-4 md:px-6 py-1 sm:py-2 md:py-3 rounded-full text-[13px] xs:text-xs sm:text-sm font-semibold mb-2 sm:mb-6 md:mb-8 border border-white/30 shadow-2xl"
             whileHover={{ scale: 1.05, borderColor: 'rgba(255,255,255,0.4)' }}
             style={{ willChange: 'transform' }}
           >
@@ -200,7 +200,7 @@ const HeroSection = () => {
           {/* Professional Main Heading */}
           <motion.h1
             variants={itemVariants}
-            className="text-[2.25rem] leading-tight xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-heading font-black text-white mb-3 sm:mb-8 md:mb-10 lg:mb-12 sm:leading-[1.1] tracking-tight px-1 sm:px-4"
+            className="text-[3rem] leading-tight xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-heading font-black text-white mb-3 sm:mb-8 md:mb-10 lg:mb-12 sm:leading-[1.1] tracking-tight px-1 sm:px-4"
             style={{
               textShadow: '0 4px 30px rgba(0,0,0,0.9), 0 2px 15px rgba(0,0,0,0.8), 0 0 50px rgba(0,0,0,0.6)',
               willChange: 'transform'
