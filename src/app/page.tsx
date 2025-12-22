@@ -51,8 +51,10 @@ export default function HomePage() {
         {/* Navigation */}
         <Navigation />
 
-        {/* Hero Section */}
-        <HeroSection />
+        {/* Hero Section - No spacing on mobile */}
+        <div className="-mt-0">
+          <HeroSection />
+        </div>
 
         {/* Professional Community Section */}
         <motion.section 
@@ -60,7 +62,7 @@ export default function HomePage() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
           variants={sectionVariants}
-          className="relative py-12 sm:py-32 overflow-hidden"
+          className="relative py-12 sm:py-32 overflow-hidden -mt-1"
         >
           {/* Clean Background */}
           <div className="absolute inset-0">
@@ -79,7 +81,7 @@ export default function HomePage() {
               {/* Professional Badge */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="inline-flex items-center space-x-2 sm:space-x-3 bg-white dark:bg-gray-800 text-brand-600 dark:text-brand-400 px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-semibold mb-6 sm:mb-12 border border-gray-200 dark:border-gray-700 shadow-sm"
+                className="inline-flex items-center space-x-2 sm:space-x-3 bg-white dark:bg-gray-800 text-brand-600 dark:text-brand-400 px-3 py-1.5 sm:px-6 sm:py-3 rounded-lg text-xs sm:text-base font-semibold mb-6 sm:mb-12 border border-gray-200 dark:border-gray-700 shadow-sm"
               >
                 <Trophy className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Excellence in Community Building</span>
@@ -201,7 +203,7 @@ export default function HomePage() {
               {/* Elite Badge */}
               <motion.div
                 whileHover={{ scale: 1.1, rotate: [0, 5, -5, 0] }}
-                className="inline-flex items-center space-x-3 bg-secondary-100/90 dark:bg-secondary-900/40 backdrop-blur-lg text-secondary-800 dark:text-secondary-200 px-8 py-4 rounded-full text-lg font-bold mb-8 border border-secondary-200/50 dark:border-secondary-700/50 shadow-2xl"
+                className="inline-flex items-center space-x-2 sm:space-x-3 bg-secondary-100/90 dark:bg-secondary-900/40 backdrop-blur-lg text-secondary-800 dark:text-secondary-200 px-4 py-2 sm:px-8 sm:py-4 rounded-full text-sm sm:text-lg font-bold mb-8 border border-secondary-200/50 dark:border-secondary-700/50 shadow-2xl"
               >
                 <motion.div
                   animate={{ rotate: [0, 15, -15, 0], scale: [1, 1.1, 1] }}
@@ -380,7 +382,7 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/10 dark:to-secondary-900/10"></div>
           <div className="relative z-10 container-enhanced">
             <motion.div variants={itemVariants} className="text-center mb-16">
-              <div className="inline-flex items-center space-x-2 bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200 px-6 py-3 rounded-full text-lg font-bold mb-8">
+              <div className="inline-flex items-center space-x-2 bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200 px-3 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold mb-8">
                 <Globe2 className="w-5 h-5" />
                 <span className="text-primary-700 dark:text-primary-300 font-bold">Global Knowledge Hub</span>
               </div>
@@ -523,7 +525,7 @@ export default function HomePage() {
                   >
                     <Link
                       href="/signup"
-                      className="group inline-flex items-center space-x-2 sm:space-x-3 lg:space-x-4 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 hover:from-blue-700 hover:via-blue-800 hover:to-blue-700 text-white px-6 py-3 sm:px-8 sm:py-4 lg:px-12 lg:py-6 rounded-full font-black text-base sm:text-lg lg:text-xl shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden"
+                      className="group inline-flex items-center space-x-2 sm:space-x-3 lg:space-x-4 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-600 hover:from-blue-700 hover:via-blue-800 hover:to-blue-700 text-white px-4 py-2 sm:px-8 sm:py-4 lg:px-12 lg:py-6 rounded-full font-black text-sm sm:text-lg lg:text-xl shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden"
                     >
                       {/* Button shimmer effect */}
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>

@@ -49,6 +49,19 @@ class ApiClient {
     this.supabaseKey = SUPABASE_ANON_KEY;
   }
 
+  private getStorageUrl(imagePath: string | null): string {
+    if (!imagePath) return '/images/default-project.jpg';
+    
+    // If it's already a full URL, return it
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+    
+    // Construct full Supabase storage URL
+    // Format: https://<project-ref>.supabase.co/storage/v1/object/public/<bucket-name>/<file-path>
+    return `${this.supabaseUrl}/storage/v1/object/public/project-images/${imagePath}`;
+  }
+
   private async supabaseRequest<T>(
     table: string,
     options: {
@@ -120,7 +133,7 @@ class ApiClient {
       id: supabaseProject.id,
       title: supabaseProject.title,
       description: supabaseProject.description || 'No description available',
-      image: supabaseProject.image_url || '/images/default-project.jpg',
+      image: this.getStorageUrl(supabaseProject.image_url),
       status: supabaseProject.status || 'planning',
       launchDate: supabaseProject.launch_date || 'TBA',
       location: supabaseProject.location || 'Remote',
@@ -319,6 +332,38 @@ class ApiClient {
     } catch (error) {
       console.error('Error submitting application:', error);
       return { error: 'Failed to submit application' };
+    }
+  }
+
+  /**
+   * Fetch events from Supabase
+   */
+  async getEvents(status?: 'upcoming' | 'past'): Promise<ApiResponse<any[]>> {
+    try {
+      let url = `${this.supabaseUrl}/rest/v1/events?select=*&published=eq.true&order=date.asc`;
+      
+      if (status) {
+        url += `&status=eq.${status}`;
+      }
+
+      const response = await fetch(url, {
+        headers: {
+          'apikey': this.supabaseKey,
+          'Authorization': `Bearer ${this.supabaseKey}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Failed to fetch events:', errorText);
+        return { error: 'Failed to fetch events' };
+      }
+
+      const data = await response.json();
+      return { data };
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      return { error: 'Failed to fetch events' };
     }
   }
 }

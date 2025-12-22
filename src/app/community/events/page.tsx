@@ -49,17 +49,20 @@ export default function EventsPage() {
       
       if (response.ok) {
         const data = await response.json()
-        setEvents(data)
+        // Ensure we set an array - handle both direct array and paginated response
+        const eventsArray = Array.isArray(data) ? data : (data.results || [])
+        setEvents(eventsArray)
       }
     } catch (error) {
       console.error('Error fetching events:', error)
+      setEvents([]) // Ensure events is always an array
     } finally {
       setLoading(false)
     }
   }
 
-  const upcomingEvents = events.filter(event => event.status === 'upcoming')
-  const pastEvents = events.filter(event => event.status === 'past')
+  const upcomingEvents = Array.isArray(events) ? events.filter(event => event.status === 'upcoming') : []
+  const pastEvents = Array.isArray(events) ? events.filter(event => event.status === 'past') : []
   const displayEvents = activeTab === 'upcoming' ? upcomingEvents : pastEvents
 
   return (
@@ -163,7 +166,7 @@ export default function EventsPage() {
                 </p>
               </motion.div>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
                 {displayEvents.map((event, index) => (
                   <motion.div
                     key={event.id}
@@ -173,34 +176,45 @@ export default function EventsPage() {
                     className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-2xl transition-all duration-300"
                   >
                     {/* Event Flyer */}
-                    <div className="relative h-64 bg-gradient-to-br from-purple-400 to-blue-500 overflow-hidden">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-center text-white">
-                          <ImageIcon className="w-16 h-16 mx-auto mb-2 opacity-50" />
-                          <p className="text-sm font-medium opacity-75">Event Flyer Placeholder</p>
-                          <p className="text-xs opacity-50 mt-1">Will be controlled via dashboard</p>
+                    <div className="relative w-full aspect-[1/1] bg-gray-100 dark:bg-gray-900 overflow-hidden">
+                      {event.flyer ? (
+                        <Image
+                          src={event.flyer}
+                          alt={event.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          priority={false}
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-purple-400 to-blue-500">
+                          <div className="text-center text-white">
+                            <ImageIcon className="w-16 h-16 mx-auto mb-2 opacity-50" />
+                            <p className="text-sm font-medium opacity-75">Event Flyer Placeholder</p>
+                            <p className="text-xs opacity-50 mt-1">Will be controlled via dashboard</p>
+                          </div>
                         </div>
-                      </div>
+                      )}
                       {/* Category Badge */}
-                      <div className="absolute top-4 left-4">
-                        <span className="bg-white/90 backdrop-blur-sm text-purple-600 px-4 py-2 rounded-full text-xs font-bold">
+                      <div className="absolute top-4 left-4 z-10">
+                        <span className="bg-white/90 backdrop-blur-sm text-purple-600 px-4 py-2 rounded-full text-xs font-bold shadow-lg">
                           {event.category}
                         </span>
                       </div>
                     </div>
 
                     {/* Event Details */}
-                    <div className="p-6">
-                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                    <div className="p-4">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                         {event.title}
                       </h3>
                       
-                      <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
                         {event.description}
                       </p>
 
                       {/* Event Meta */}
-                      <div className="space-y-3 mb-6">
+                      <div className="space-y-2 mb-4">
                         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                           <Calendar className="w-4 h-4 mr-3 text-purple-600" />
                           <span>{new Date(event.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
@@ -220,9 +234,9 @@ export default function EventsPage() {
                       </div>
 
                       {/* Event Images Gallery */}
-                      {event.images.length > 0 && (
-                        <div className="mb-6">
-                          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center">
+                      {event.images && event.images.length > 0 && (
+                        <div className="mb-4">
+                          <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center">
                             <ImageIcon className="w-4 h-4 mr-2" />
                             Event Photos ({event.images.length})
                           </h4>
@@ -242,15 +256,29 @@ export default function EventsPage() {
                       )}
 
                       {/* Action Buttons */}
-                      <div className="flex gap-3">
-                        <button className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center group">
+                      <div className="flex gap-2">
+                        <button className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2.5 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center group text-sm">
                           <span>View Details</span>
                           <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                         </button>
-                        <button className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-xl font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-300 flex items-center justify-center">
-                          <Download className="w-4 h-4 mr-2" />
-                          <span>Flyer</span>
-                        </button>
+                        {event.flyer && (
+                          <a 
+                            href={event.flyer} 
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2.5 rounded-xl font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-300 flex items-center justify-center text-sm"
+                          >
+                            <Download className="w-4 h-4 mr-2" />
+                            <span>Flyer</span>
+                          </a>
+                        )}
+                        {!event.flyer && (
+                          <button disabled className="bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 px-4 py-2.5 rounded-xl font-semibold cursor-not-allowed opacity-50 flex items-center justify-center text-sm">
+                            <Download className="w-4 h-4 mr-2" />
+                            <span>Flyer</span>
+                          </button>
+                        )}
                       </div>
                     </div>
                   </motion.div>

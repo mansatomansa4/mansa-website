@@ -138,7 +138,7 @@ const Navigation = () => {
         }`}
       >
         <nav className="w-full px-3 sm:px-4 md:px-6 lg:px-8 max-w-[1920px] mx-auto">
-          <div className="flex justify-between items-center h-14 sm:h-16 lg:h-20">
+          <div className="flex justify-between items-center h-14 sm:h-16 lg:h-20 mb-0 pb-0">
             {/* Logo */}
             <motion.div
               className="flex-shrink-0 min-w-0"

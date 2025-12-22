@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		},
+		{
+			"path": "../../../../mansa-backend"
+		},
+		{
+			"path": "../../../../Mansa-dashboard"
+		}
+	],
+	"settings": {}
+}

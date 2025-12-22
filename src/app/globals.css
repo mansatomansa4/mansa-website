@@ -399,30 +399,44 @@ img {
   object-position: center center;
 }
 
-/* Tablet screens - scale down to see more */
+/* Tablet screens */
+@media (max-width: 1024px) {
+  .video-background {
+    min-width: 100%;
+    min-height: 100%;
+  }
+}
+
+/* Mobile landscape and smaller tablets */
 @media (max-width: 768px) {
   .video-background {
-    transform: translate(-50%, -50%) scale(0.8);
-    min-width: 10%;
-    min-height: 130%;
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
   }
 }
 
-/* Mobile screens - scale down more to see entire video */
+/* Mobile portrait */
 @media (max-width: 640px) {
   .video-background {
-    transform: translate(-50%, -50%) scale(0.65);
-    min-width: 160%;
-    min-height: 160%;
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
   }
 }
 
-/* Small mobile screens - scale down even more */
+/* Small mobile screens */
 @media (max-width: 480px) {
   .video-background {
-    transform: translate(-50%, -50%) scale(0.55);
-    min-width: 190%;
-    min-height: 190%;
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
   }
 }
 
