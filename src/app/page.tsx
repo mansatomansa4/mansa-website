@@ -485,8 +485,8 @@ export default function HomePage() {
                   className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mt-12 sm:mt-16 max-w-5xl mx-auto"
                 >
                   {[
-                    { number: "100+", label: "Elite Members", icon: Users },
-                    { number: "4+", label: "Global Hubs", icon: Globe2 },
+                    { number: "200+", label: "Elite Members", icon: Users },
+                    { number: "12+", label: "Global Hubs", icon: Globe2 },
                     { number: "14+", label: "Impact Projects", icon: Target },
                     { number: "100%", label: "Excellence", icon: Trophy }
                   ].map((stat, index) => (
