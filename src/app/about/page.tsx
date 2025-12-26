@@ -359,7 +359,7 @@ export default function AboutPage() {
         </section>
 
         {/* Contact Us Section - Ultra Professional */}
-        <section className="relative py-20 sm:py-28 lg:py-32 overflow-hidden bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 dark:from-black dark:via-gray-950 dark:to-black">
+        <section className="relative py-8 sm:py-12 lg:py-16 overflow-hidden bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 dark:from-black dark:via-gray-950 dark:to-black">
           {/* Animated background patterns */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(16,185,129,0.1)_1px,transparent_1px),linear-gradient(-45deg,rgba(16,185,129,0.1)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
@@ -397,9 +397,9 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2, duration: 0.6 }}
-                className="inline-flex items-center space-x-2 bg-emerald-500/10 backdrop-blur-sm border border-emerald-500/20 text-emerald-400 px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold mb-8 sm:mb-12"
+                className="inline-flex items-center space-x-1.5 bg-emerald-500/10 backdrop-blur-sm border border-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded-full text-xs font-semibold mb-3 sm:mb-4"
               >
-                <Mail className="w-4 h-4" />
+                <Mail className="w-3 h-3" />
                 <span className="tracking-wide">GET IN TOUCH</span>
               </motion.div>
 
@@ -409,7 +409,7 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3, duration: 0.8 }}
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-black mb-8 sm:mb-12"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-heading font-black mb-4 sm:mb-6"
               >
                 <span className="bg-gradient-to-r from-emerald-400 via-emerald-300 to-emerald-500 bg-clip-text text-transparent">
                   Contact Us
@@ -422,12 +422,12 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.4, duration: 0.8 }}
-                className="max-w-3xl mx-auto space-y-4 sm:space-y-6 mb-12 sm:mb-16"
+                className="max-w-xl mx-auto space-y-2 mb-6 sm:mb-8"
               >
-                <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gray-100 leading-relaxed font-light tracking-tight">
+                <p className="text-sm sm:text-base md:text-lg text-gray-100 leading-relaxed font-light">
                   Have questions or want to get in touch?
                 </p>
-                <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gray-100 leading-relaxed font-light tracking-tight">
+                <p className="text-sm sm:text-base md:text-lg text-gray-100 leading-relaxed font-light">
                   We would love to hear from you!
                 </p>
               </motion.div>
@@ -438,19 +438,19 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.5, duration: 0.8 }}
-                className="relative max-w-3xl mx-auto"
+                className="relative max-w-xl mx-auto"
               >
-                <div className="relative bg-gradient-to-br from-gray-800/80 via-slate-800/80 to-gray-800/80 backdrop-blur-xl border border-gray-700/50 rounded-2xl sm:rounded-3xl p-8 sm:p-12 shadow-2xl">
+                <div className="relative bg-gradient-to-br from-gray-800/80 via-slate-800/80 to-gray-800/80 backdrop-blur-xl border border-gray-700/50 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-2xl">
                   {/* Inner glow effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-blue-500/5 rounded-2xl sm:rounded-3xl"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-blue-500/5 rounded-lg sm:rounded-xl"></div>
                   
-                  <div className="relative space-y-6 sm:space-y-8">
-                    <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 backdrop-blur-sm rounded-2xl border border-emerald-500/30 mx-auto">
-                      <Send className="w-8 h-8 sm:w-10 sm:h-10 text-emerald-400" />
+                  <div className="relative space-y-3 sm:space-y-4">
+                    <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 backdrop-blur-sm rounded-lg border border-emerald-500/30 mx-auto">
+                      <Send className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400" />
                     </div>
 
                     <div>
-                      <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-4 sm:mb-6 font-medium">
+                      <p className="text-xs sm:text-sm text-gray-300 mb-2 sm:mb-3 font-medium">
                         You can reach us via email at
                       </p>
                       
@@ -458,9 +458,9 @@ export default function AboutPage() {
                         href="mailto:mansatomansa@gmail.com"
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
-                        className="group relative inline-flex items-center space-x-3 sm:space-x-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-6 sm:px-10 py-4 sm:py-5 rounded-xl sm:rounded-2xl font-bold text-lg sm:text-2xl md:text-3xl shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/50 transition-all duration-300"
+                        className="group relative inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-3 sm:px-5 py-2.5 sm:py-3 rounded-lg font-bold text-sm sm:text-base md:text-lg shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/50 transition-all duration-300"
                       >
-                        <Mail className="w-6 h-6 sm:w-7 sm:h-7" />
+                        <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                         <span className="break-all">mansatomansa@gmail.com</span>
                         <motion.div
                           animate={{ x: [0, 5, 0] }}
@@ -470,12 +470,12 @@ export default function AboutPage() {
                         </motion.div>
                         
                         {/* Button shimmer effect */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 rounded-xl sm:rounded-2xl"></div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 rounded-lg"></div>
                       </motion.a>
                     </div>
 
-                    <div className="pt-6 sm:pt-8 border-t border-gray-700/50">
-                      <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
+                    <div className="pt-3 sm:pt-4 border-t border-gray-700/50">
+                      <p className="text-xs text-gray-400 leading-relaxed">
                         We typically respond within 24-48 hours. Looking forward to connecting with you!
                       </p>
                     </div>
@@ -486,12 +486,12 @@ export default function AboutPage() {
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="absolute -top-4 -left-4 w-24 h-24 border-t-2 border-l-2 border-emerald-500/30 rounded-tl-3xl"
+                  className="absolute -top-2 -left-2 w-12 h-12 border-t-2 border-l-2 border-emerald-500/30 rounded-tl-xl"
                 />
                 <motion.div
                   animate={{ rotate: -360 }}
                   transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="absolute -bottom-4 -right-4 w-24 h-24 border-b-2 border-r-2 border-emerald-500/30 rounded-br-3xl"
+                  className="absolute -bottom-2 -right-2 w-12 h-12 border-b-2 border-r-2 border-emerald-500/30 rounded-br-xl"
                 />
               </motion.div>
 
@@ -501,7 +501,7 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.7, duration: 0.8 }}
-                className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto"
+                className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-2xl mx-auto"
               >
                 {[
                   { icon: Users, label: "Community First", desc: "We value every member" },
@@ -515,13 +515,13 @@ export default function AboutPage() {
                     viewport={{ once: true }}
                     transition={{ delay: 0.8 + index * 0.1, duration: 0.6 }}
                     whileHover={{ y: -5 }}
-                    className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/30 rounded-xl p-6 text-center hover:border-emerald-500/30 transition-all duration-300"
+                    className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/30 rounded-lg p-3 text-center hover:border-emerald-500/30 transition-all duration-300"
                   >
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-500/10 rounded-lg mb-4">
-                      <item.icon className="w-6 h-6 text-emerald-400" />
+                    <div className="inline-flex items-center justify-center w-8 h-8 bg-emerald-500/10 rounded-lg mb-2">
+                      <item.icon className="w-4 h-4 text-emerald-400" />
                     </div>
-                    <h3 className="text-white font-semibold text-lg mb-2">{item.label}</h3>
-                    <p className="text-gray-400 text-sm">{item.desc}</p>
+                    <h3 className="text-white font-semibold text-sm mb-1">{item.label}</h3>
+                    <p className="text-gray-400 text-xs">{item.desc}</p>
                   </motion.div>
                 ))}
               </motion.div>
