@@ -3,7 +3,7 @@
 import React from 'react'
 import Navigation from '@/components/layout/Navigation'
 import { motion } from 'framer-motion'
-import { Target, Eye, Heart, Globe, Users, Lightbulb, ArrowRight, Network, BookOpen, Briefcase, MapPin } from 'lucide-react'
+import { Target, Eye, Heart, Globe, Users, Lightbulb, ArrowRight, Network, BookOpen, Briefcase, MapPin, Mail, Send } from 'lucide-react'
 
 export default function AboutPage() {
   const containerVariants = {
@@ -354,6 +354,177 @@ export default function AboutPage() {
                   <span>Meet Our Team</span>
                 </motion.a>
               </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Contact Us Section - Ultra Professional */}
+        <section className="relative py-20 sm:py-28 lg:py-32 overflow-hidden bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 dark:from-black dark:via-gray-950 dark:to-black">
+          {/* Animated background patterns */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(16,185,129,0.1)_1px,transparent_1px),linear-gradient(-45deg,rgba(16,185,129,0.1)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+          </div>
+          
+          {/* Gradient orbs */}
+          <motion.div
+            animate={{ 
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3]
+            }}
+            transition={{ duration: 8, repeat: Infinity }}
+            className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{ 
+              scale: [1, 1.3, 1],
+              opacity: [0.2, 0.4, 0.2]
+            }}
+            transition={{ duration: 10, repeat: Infinity, delay: 1 }}
+            className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
+          />
+
+          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+              className="text-center"
+            >
+              {/* Professional badge */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                className="inline-flex items-center space-x-2 bg-emerald-500/10 backdrop-blur-sm border border-emerald-500/20 text-emerald-400 px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold mb-8 sm:mb-12"
+              >
+                <Mail className="w-4 h-4" />
+                <span className="tracking-wide">GET IN TOUCH</span>
+              </motion.div>
+
+              {/* Main heading with gradient */}
+              <motion.h2 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3, duration: 0.8 }}
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-black mb-8 sm:mb-12"
+              >
+                <span className="bg-gradient-to-r from-emerald-400 via-emerald-300 to-emerald-500 bg-clip-text text-transparent">
+                  Contact Us
+                </span>
+              </motion.h2>
+              
+              {/* Description */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+                className="max-w-3xl mx-auto space-y-4 sm:space-y-6 mb-12 sm:mb-16"
+              >
+                <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gray-100 leading-relaxed font-light tracking-tight">
+                  Have questions or want to get in touch?
+                </p>
+                <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-gray-100 leading-relaxed font-light tracking-tight">
+                  We would love to hear from you!
+                </p>
+              </motion.div>
+
+              {/* Email CTA Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="relative max-w-3xl mx-auto"
+              >
+                <div className="relative bg-gradient-to-br from-gray-800/80 via-slate-800/80 to-gray-800/80 backdrop-blur-xl border border-gray-700/50 rounded-2xl sm:rounded-3xl p-8 sm:p-12 shadow-2xl">
+                  {/* Inner glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-blue-500/5 rounded-2xl sm:rounded-3xl"></div>
+                  
+                  <div className="relative space-y-6 sm:space-y-8">
+                    <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 backdrop-blur-sm rounded-2xl border border-emerald-500/30 mx-auto">
+                      <Send className="w-8 h-8 sm:w-10 sm:h-10 text-emerald-400" />
+                    </div>
+
+                    <div>
+                      <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-4 sm:mb-6 font-medium">
+                        You can reach us via email at
+                      </p>
+                      
+                      <motion.a
+                        href="mailto:mansatomansa@gmail.com"
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="group relative inline-flex items-center space-x-3 sm:space-x-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-6 sm:px-10 py-4 sm:py-5 rounded-xl sm:rounded-2xl font-bold text-lg sm:text-2xl md:text-3xl shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/50 transition-all duration-300"
+                      >
+                        <Mail className="w-6 h-6 sm:w-7 sm:h-7" />
+                        <span className="break-all">mansatomansa@gmail.com</span>
+                        <motion.div
+                          animate={{ x: [0, 5, 0] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        >
+                          <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </motion.div>
+                        
+                        {/* Button shimmer effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 rounded-xl sm:rounded-2xl"></div>
+                      </motion.a>
+                    </div>
+
+                    <div className="pt-6 sm:pt-8 border-t border-gray-700/50">
+                      <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
+                        We typically respond within 24-48 hours. Looking forward to connecting with you!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Decorative corner accents */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="absolute -top-4 -left-4 w-24 h-24 border-t-2 border-l-2 border-emerald-500/30 rounded-tl-3xl"
+                />
+                <motion.div
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="absolute -bottom-4 -right-4 w-24 h-24 border-b-2 border-r-2 border-emerald-500/30 rounded-br-3xl"
+                />
+              </motion.div>
+
+              {/* Additional contact info */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.7, duration: 0.8 }}
+                className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto"
+              >
+                {[
+                  { icon: Users, label: "Community First", desc: "We value every member" },
+                  { icon: Send, label: "Quick Response", desc: "24-48 hour reply time" },
+                  { icon: Heart, label: "Always Here", desc: "Ready to help you grow" }
+                ].map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.8 + index * 0.1, duration: 0.6 }}
+                    whileHover={{ y: -5 }}
+                    className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/30 rounded-xl p-6 text-center hover:border-emerald-500/30 transition-all duration-300"
+                  >
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-500/10 rounded-lg mb-4">
+                      <item.icon className="w-6 h-6 text-emerald-400" />
+                    </div>
+                    <h3 className="text-white font-semibold text-lg mb-2">{item.label}</h3>
+                    <p className="text-gray-400 text-sm">{item.desc}</p>
+                  </motion.div>
+                ))}
+              </motion.div>
             </motion.div>
           </div>
         </section>

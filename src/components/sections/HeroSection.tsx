@@ -29,8 +29,8 @@ const HeroSection = () => {
   }
 
   const stats = [
-    { icon: Users, value: '100+', label: 'Members' },
-    { icon: Globe, value: '3+', label: 'Countries' },
+    { icon: Users, value: '200+', label: 'Members' },
+    { icon: Globe, value: '12+', label: 'Countries' },
     { icon: Heart, value: '14+', label: 'Projects ' },
   ]
 
@@ -62,124 +62,14 @@ const HeroSection = () => {
           <source src="/videos/mansa-vid.mp4" type="video/mp4" />
         </video>
 
-        {/* Minimal overlay for text readability only */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50"></div>
-      </div>
-
-      {/* Mobile Top Decorative Elements - Only visible on mobile */}
-      <div className="absolute top-0 left-0 right-0 z-5 h-48 sm:hidden overflow-hidden">
-        {/* Gradient Accent Bar */}
-        <motion.div
-          initial={{ scaleX: 0, opacity: 0 }}
-          animate={{ scaleX: 1, opacity: 1 }}
-          transition={{ duration: 1.5, delay: 0.2 }}
-          className="absolute top-16 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-brand-400 to-transparent"
-        />
-        
-        {/* Floating Decorative Elements */}
-        <motion.div
-          animate={{ 
-            y: [0, -15, 0],
-            rotate: [0, 180, 360]
-          }}
-          transition={{ 
-            duration: 8, 
-            repeat: Infinity,
-            ease: "easeInOut" 
-          }}
-          className="absolute top-20 left-8 w-8 h-8 rounded-full bg-gradient-to-br from-brand-400/30 to-brand-600/30 backdrop-blur-sm border border-brand-400/40"
-        />
-        
-        <motion.div
-          animate={{ 
-            y: [0, 20, 0],
-            x: [0, 10, 0],
-            rotate: [0, -180, -360]
-          }}
-          transition={{ 
-            duration: 10, 
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 0.5
-          }}
-          className="absolute top-24 right-12 w-6 h-6 rounded-full bg-gradient-to-br from-brand-300/40 to-brand-500/40 backdrop-blur-sm border border-brand-300/50"
-        />
-
-        <motion.div
-          animate={{ 
-            y: [0, -10, 0],
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ 
-            duration: 6, 
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-          className="absolute top-32 left-1/2 transform -translate-x-1/2"
-        >
-          <Star className="w-5 h-5 text-brand-400/60" fill="currentColor" />
-        </motion.div>
-
-        <motion.div
-          animate={{ 
-            y: [0, 15, 0],
-            x: [0, -8, 0]
-          }}
-          transition={{ 
-            duration: 7, 
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 0.3
-          }}
-          className="absolute top-28 right-1/4 w-4 h-4 rounded-full bg-gradient-to-br from-brand-200/30 to-brand-400/30 backdrop-blur-sm"
-        />
-
-        <motion.div
-          animate={{ 
-            y: [0, -12, 0],
-            rotate: [0, 90, 180]
-          }}
-          transition={{ 
-            duration: 9, 
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 0.7
-          }}
-          className="absolute top-20 left-1/4 w-3 h-3 rounded-sm bg-gradient-to-br from-brand-500/40 to-brand-600/40 backdrop-blur-sm border border-brand-400/30"
-        />
-
-        {/* Subtle glow effects */}
-        <motion.div
-          animate={{ 
-            opacity: [0.3, 0.6, 0.3],
-            scale: [1, 1.5, 1]
-          }}
-          transition={{ 
-            duration: 4, 
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute top-24 left-1/3 w-16 h-16 rounded-full bg-brand-400/10 blur-xl"
-        />
-        
-        <motion.div
-          animate={{ 
-            opacity: [0.2, 0.5, 0.2],
-            scale: [1, 1.3, 1]
-          }}
-          transition={{ 
-            duration: 5, 
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-          className="absolute top-28 right-1/3 w-20 h-20 rounded-full bg-brand-500/10 blur-xl"
-        />
+        {/* Professional overlay for optimal readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
+        {/* Mobile-optimized vignette effect */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] md:bg-[radial-gradient(circle_at_center,transparent_30%,rgba(0,0,0,0.3)_100%)]"></div>
       </div>
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-20 md:py-24 lg:py-28 text-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-20 md:py-24 lg:py-28 text-center">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -189,20 +79,21 @@ const HeroSection = () => {
           {/* Professional Badge */}
           <motion.div
             variants={itemVariants}
-            className="inline-flex items-center space-x-1 sm:space-x-2 bg-black/60 backdrop-blur-md text-white px-2 sm:px-4 md:px-6 py-1 sm:py-2 md:py-3 rounded-full text-[13px] xs:text-xs sm:text-sm font-semibold mb-2 sm:mb-6 md:mb-8 border border-white/30 shadow-2xl"
-            whileHover={{ scale: 1.05, borderColor: 'rgba(255,255,255,0.4)' }}
+            className="inline-flex items-center space-x-2 bg-black/70 backdrop-blur-lg text-white px-4 sm:px-6 md:px-6 py-2 sm:py-2 md:py-3 rounded-full text-xs sm:text-sm font-semibold mb-4 sm:mb-6 md:mb-8 border border-white/40 shadow-2xl"
+            whileHover={{ scale: 1.05, borderColor: 'rgba(255,255,255,0.5)' }}
+            whileTap={{ scale: 0.98 }}
             style={{ willChange: 'transform' }}
           >
-            <Sparkles className="w-2.5 h-2.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-brand-400" />
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-brand-400" />
             <span className="font-semibold tracking-wide">Building the Future Together</span>
           </motion.div>
 
           {/* Professional Main Heading */}
           <motion.h1
             variants={itemVariants}
-            className="text-[3rem] leading-tight xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-heading font-black text-white mb-3 sm:mb-8 md:mb-10 lg:mb-12 sm:leading-[1.1] tracking-tight px-1 sm:px-4"
+            className="text-4xl leading-[1.15] xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-heading font-black text-white mb-4 sm:mb-8 md:mb-10 lg:mb-12 sm:leading-[1.1] tracking-tight px-2 sm:px-4"
             style={{
-              textShadow: '0 4px 30px rgba(0,0,0,0.9), 0 2px 15px rgba(0,0,0,0.8), 0 0 50px rgba(0,0,0,0.6)',
+              textShadow: '0 4px 30px rgba(0,0,0,0.95), 0 2px 15px rgba(0,0,0,0.9), 0 0 50px rgba(0,0,0,0.7)',
               willChange: 'transform'
             }}
           >
@@ -221,7 +112,7 @@ const HeroSection = () => {
               transition={{ delay: 0.7, duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <span className="text-white">One Mansa </span>
-              <span className="bg-gradient-to-r from-brand-400 to-brand-500 bg-clip-text text-transparent">at a Time</span>
+              <span className="text-white">at a Time</span>
             </motion.span>
 
             {/* Professional Underline */}
@@ -236,21 +127,21 @@ const HeroSection = () => {
           {/* Enhanced Subtitle */}
           <motion.div
             variants={itemVariants}
-            className="relative mb-4 sm:mb-8 md:mb-10 max-w-3xl mx-auto bg-black/40 backdrop-blur-sm rounded-lg sm:rounded-xl px-3 sm:px-6 md:px-8 py-2 sm:py-4"
+            className="relative mb-6 sm:mb-8 md:mb-10 max-w-3xl mx-auto bg-black/60 backdrop-blur-md rounded-xl sm:rounded-2xl px-4 sm:px-6 md:px-8 py-3 sm:py-4 border border-white/10"
           >
             <motion.p
-              className="text-xs sm:text-base md:text-lg lg:text-xl text-white leading-relaxed font-light tracking-wide"
+              className="text-sm sm:text-base md:text-lg lg:text-xl text-white leading-relaxed font-light tracking-wide"
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 1.1, duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
               style={{
-                textShadow: '0 2px 15px rgba(0,0,0,0.8), 0 0 30px rgba(0,0,0,0.6)',
+                textShadow: '0 2px 15px rgba(0,0,0,0.9), 0 0 30px rgba(0,0,0,0.7)',
               }}
             >
               <span className="font-normal text-white">Uniting</span>{' '}
-              <span className="text-brand-300 font-semibold">African students</span>,{' '}
-              <span className="text-brand-300 font-semibold">students of African origin</span> and{' '}
-              <span className="text-brand-300 font-semibold">professionals</span>{' '}
+              <span className="text-white font-semibold">African students</span>,{' '}
+              <span className="text-white font-semibold">students of African origin</span> and{' '}
+              <span className="text-white font-semibold">professionals</span>{' '}
               <span className="text-white">to learn, network, and work on projects that open doors and create opportunities for all.</span>
             </motion.p>
           </motion.div>
@@ -258,17 +149,17 @@ const HeroSection = () => {
           {/* Enhanced CTA Buttons */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mt-2 sm:mt-0 mb-6 sm:mb-8 md:mb-10 px-2 sm:px-0"
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-8 sm:mb-8 md:mb-10 px-4 sm:px-0"
           >
             <motion.div
-              whileHover={{ scale: 1.03, y: -2 }}
-              whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
               className="relative group w-full sm:w-auto"
               style={{ willChange: 'transform' }}
             >
               <Link
                 href="/signup"
-                className="relative inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white px-3 sm:px-6 md:px-7 py-1.5 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm md:text-base font-semibold shadow-lg shadow-brand-500/40 transition-all duration-300 overflow-hidden w-full sm:w-auto"
+                className="relative inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 active:from-brand-700 active:to-brand-800 text-white px-6 sm:px-6 md:px-7 py-3 sm:py-2.5 md:py-3 rounded-full text-sm sm:text-sm md:text-base font-semibold shadow-lg shadow-brand-500/50 hover:shadow-xl hover:shadow-brand-500/60 transition-all duration-300 overflow-hidden w-full sm:w-auto min-h-[48px] sm:min-h-0"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 <span className="relative z-10 whitespace-nowrap">Join Community</span>
@@ -283,14 +174,14 @@ const HeroSection = () => {
             </motion.div>
 
             <motion.div
-              whileHover={{ scale: 1.03, y: -2 }}
-              whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
               className="relative group w-full sm:w-auto"
               style={{ willChange: 'transform' }}
             >
               <Link
                 href="/about"
-                className="relative inline-flex items-center justify-center bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-3 sm:px-6 md:px-7 py-1.5 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm md:text-base font-semibold border border-white/30 hover:border-white/50 shadow-lg transition-all duration-300 w-full sm:w-auto"
+                className="relative inline-flex items-center justify-center bg-white/10 hover:bg-white/20 active:bg-white/25 backdrop-blur-lg text-white px-6 sm:px-6 md:px-7 py-3 sm:py-2.5 md:py-3 rounded-full text-sm sm:text-sm md:text-base font-semibold border border-white/40 hover:border-white/60 shadow-lg transition-all duration-300 w-full sm:w-auto min-h-[48px] sm:min-h-0"
               >
                 <span className="relative z-10 whitespace-nowrap">Learn More</span>
               </Link>
@@ -300,7 +191,7 @@ const HeroSection = () => {
           {/* Enhanced Stats */}
           <motion.div
             variants={itemVariants}
-            className="grid grid-cols-3 gap-1.5 sm:gap-4 md:gap-6 max-w-3xl mx-auto px-1 sm:px-0 mb-8 sm:mb-0"
+            className="grid grid-cols-3 gap-3 sm:gap-4 md:gap-6 max-w-3xl mx-auto px-0 sm:px-0 mb-12 sm:mb-0"
           >
             {stats.map((stat, index) => (
               <motion.div
@@ -317,20 +208,20 @@ const HeroSection = () => {
                 style={{ willChange: 'transform' }}
               >
                 {/* Card */}
-                <div className="relative flex-1 flex flex-col items-center justify-center bg-black/50 backdrop-blur-md rounded-lg sm:rounded-xl p-1.5 sm:p-3 md:p-4 border border-white/20 shadow-xl group-hover:shadow-brand-500/30 group-hover:border-white/40 transition-all duration-500 overflow-hidden min-h-[70px] sm:min-h-[100px] md:min-h-[120px]">
+                <div className="relative flex-1 flex flex-col items-center justify-center bg-black/60 backdrop-blur-lg rounded-xl sm:rounded-xl p-3 sm:p-3 md:p-4 border border-white/30 shadow-xl group-hover:shadow-brand-500/40 group-hover:border-white/50 transition-all duration-500 overflow-hidden min-h-[90px] sm:min-h-[100px] md:min-h-[120px]">
                   {/* Hover gradient effect */}
                   <div className="absolute inset-0 bg-gradient-to-br from-brand-500/0 via-brand-400/0 to-brand-600/0 group-hover:from-brand-500/20 group-hover:via-brand-400/10 group-hover:to-brand-600/20 transition-all duration-500 rounded-lg sm:rounded-xl"></div>
 
                   <motion.div
-                    className="relative inline-flex items-center justify-center w-6 h-6 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-sm rounded-lg sm:rounded-xl mb-1 sm:mb-2 md:mb-3 group-hover:from-brand-400/30 group-hover:to-brand-600/20 transition-all duration-500"
+                    className="relative inline-flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-br from-white/25 to-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl mb-2 sm:mb-2 md:mb-3 group-hover:from-brand-400/30 group-hover:to-brand-600/20 transition-all duration-500"
                     whileHover={{ scale: 1.1, rotate: 360 }}
                     transition={{ duration: 0.6 }}
                   >
-                    <stat.icon className="w-3 h-3 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white group-hover:text-brand-300 transition-colors duration-300" />
+                    <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white group-hover:text-brand-300 transition-colors duration-300" />
                   </motion.div>
 
                   <motion.div
-                    className="relative text-base sm:text-xl md:text-2xl lg:text-3xl font-black bg-gradient-to-r from-brand-300 via-brand-400 to-brand-300 bg-clip-text text-transparent mb-0 sm:mb-1"
+                    className="relative text-xl sm:text-xl md:text-2xl lg:text-3xl font-black bg-gradient-to-r from-brand-300 via-brand-400 to-brand-300 bg-clip-text text-transparent mb-0.5 sm:mb-1"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{
@@ -343,7 +234,7 @@ const HeroSection = () => {
                     {stat.value}
                   </motion.div>
 
-                  <div className="relative text-white font-medium text-[8px] sm:text-xs md:text-sm tracking-wide whitespace-nowrap" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
+                  <div className="relative text-white font-medium text-[10px] sm:text-xs md:text-sm tracking-wide whitespace-nowrap" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}>
                     {stat.label}
                   </div>
                 </div>
@@ -378,35 +269,27 @@ const HeroSection = () => {
         </motion.div>
       </motion.div>
 
-      {/* Add responsive CSS for the video */}
+      {/* Professional video styling */}
       <style jsx global>{`
-        /* For mobile devices */
-        @media (max-width: 767px) {
+        .video-background {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+          object-position: center !important;
+          position: relative !important;
+        }
+        
+        /* Mobile-specific optimizations */
+        @media (max-width: 640px) {
           .video-background {
-            width: auto !important;
-            height: auto !important;
-            max-width: 90% !important;
-            max-height: 60% !important;
-            position: absolute !important;
-           
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) !important;
-            object-fit: contain !important;
+            object-position: center center !important;
           }
         }
         
-        /* For tablet and larger */
-        @media (min-width: 768px) {
-          .video-background {
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important;
-            position: relative !important;
-            top: auto !important;
-            left: auto !important;
-            transform: none !important;
-          }
+        /* Smooth video loading */
+        .video-background {
+          opacity: 1;
+          transition: opacity 0.5s ease-in-out;
         }
       `}</style>
     </section>

@@ -110,7 +110,7 @@ export default function HomePage() {
                       whileInView={{ y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.7, duration: 1 }}
-                      className="inline-block text-primary-600 dark:text-primary-400 font-black"
+                      className="inline-block font-black"
                     >
                       Together
                     </motion.span>
@@ -124,7 +124,7 @@ export default function HomePage() {
                       whileInView={{ y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.9, duration: 1 }}
-                      className="inline-block text-accent-600 dark:text-accent-400 font-black"
+                      className="inline-block font-black"
                     >
                       Thrive{' '}
                     </motion.span>
@@ -133,7 +133,7 @@ export default function HomePage() {
                       whileInView={{ y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: 1.1, duration: 1 }}
-                      className="inline-block text-secondary-600 dark:text-secondary-400 font-black"
+                      className="inline-block font-black"
                     >
                       Forever
                     </motion.span>
