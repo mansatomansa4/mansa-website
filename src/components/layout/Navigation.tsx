@@ -57,6 +57,13 @@ const Navigation = () => {
       isExternal: false
     },
     {
+      href: '/community/mentorship',
+      label: 'Mentorship',
+      icon: Users,
+      description: 'Connect with expert mentors',
+      isExternal: false
+    },
+    {
       href: '/community/events',
       label: 'Events',
       icon: Calendar,

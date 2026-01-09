@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import ErrorBoundary from '@/components/ui/ErrorBoundary'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -76,16 +77,18 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className={`${inter.className} antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-white overflow-x-hidden`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div id="__next">
-            {children}
-          </div>
-        </ThemeProvider>
+        <ErrorBoundary>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div id="__next">
+              {children}
+            </div>
+          </ThemeProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )
