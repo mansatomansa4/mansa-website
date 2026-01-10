@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { 
   Users, Star, Calendar, Search, Filter, 
@@ -42,6 +43,7 @@ interface ExpertiseCategory {
 }
 
 export default function MentorshipPage() {
+  const router = useRouter()
   const [mentors, setMentors] = useState<Mentor[]>([])
   const [expertiseCategories, setExpertiseCategories] = useState<ExpertiseCategory[]>([])
   const [selectedExpertise, setSelectedExpertise] = useState<string>('')
@@ -49,11 +51,28 @@ export default function MentorshipPage() {
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
+    // Check authentication
+    const token = localStorage.getItem('access_token')
+    const userEmail = localStorage.getItem('user_email')
+    
+    if (!token || !userEmail) {
+      // Redirect to auth page if not logged in
+      router.push('/community/mentorship/auth?redirect=/community/mentorship')
+      return
+    }
+    
+    setIsAuthenticated(true)
     fetchMentors()
     fetchExpertiseCategories()
-  }, [page, selectedExpertise])
+  }, [page, selectedExpertise, router])
+
+  // Don't render content if not authenticated
+  if (!isAuthenticated) {
+    return null
+  }
 
   const fetchMentors = async () => {
     try {
