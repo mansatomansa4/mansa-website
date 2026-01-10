@@ -1,13 +1,13 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Mail, ArrowRight, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 
-export default function MentorshipAuthPage() {
+function AuthForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect') || '/community/mentorship'
@@ -75,9 +75,7 @@ export default function MentorshipAuthPage() {
   }
 
   return (
-    <>
-      <Navigation />
-      <div className="min-h-screen bg-gradient-to-br from-[#004D43] via-[#003832] to-[#002922] pt-24 pb-16">
+    <div className="min-h-screen bg-gradient-to-br from-[#004D43] via-[#003832] to-[#002922] pt-24 pb-16">
         <div className="max-w-md mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -203,7 +201,24 @@ export default function MentorshipAuthPage() {
             </div>
           </motion.div>
         </div>
-      </div>
+    </div>
+  )
+}
+
+export default function MentorshipAuthPage() {
+  return (
+    <>
+      <Navigation />
+      <Suspense fallback={
+        <div className="min-h-screen bg-gradient-to-br from-[#004D43] via-[#003832] to-[#002922] pt-24 pb-16 flex items-center justify-center">
+          <div className="text-white text-center">
+            <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4" />
+            <p>Loading...</p>
+          </div>
+        </div>
+      }>
+        <AuthForm />
+      </Suspense>
       <ScrollToTopButton />
     </>
   )
