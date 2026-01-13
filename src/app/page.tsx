@@ -653,21 +653,6 @@ export default function HomePage() {
               </motion.div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-              <motion.div variants={itemVariants}>
-                <NetworkCard 
-                  text='Together we learn, together we excel'
-                  imageUrl='/together.jpg'
-                />
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <NetworkCard 
-                  text='Join a mentorship circle where peers support each other, share resources, and grow together through shared experience'
-                  imageUrl='/Frame 34.png'
-                />
-              </motion.div>
-            </div>
           </div>
         </motion.section>
 
