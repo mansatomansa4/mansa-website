@@ -34,13 +34,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://mansa-to-mansa.com',
+    url: 'https://mansa-to-mansa.org',
     title: 'Mansa-to-Mansa | Building the Future Together',
     description: 'Uniting African students, students of African origin, and professionals to learn, network, and work on projects that open doors and create opportunities for all.',
     siteName: 'Mansa-to-Mansa',
     images: [
       {
-        url: '/og-image.png',
+        url: '/web-app-manifest-512x512.png',
         width: 1200,
         height: 630,
         alt: 'Mansa-to-Mansa - Building the Future Together',
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Mansa-to-Mansa | Building the Future Together',
     description: 'Uniting African students, students of African origin, and professionals to learn, network, and work on projects that open doors and create opportunities for all.',
-    images: ['/og-image.png'],
+    images: ['/web-app-manifest-512x512.png'],
     creator: '@mansatomansa',
   },
   icons: {
