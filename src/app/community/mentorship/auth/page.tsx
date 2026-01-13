@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { Mail, ArrowRight, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
+import { getApiBaseUrl } from '@/lib/api'
 
 function AuthForm() {
   const router = useRouter()
@@ -23,7 +24,8 @@ function AuthForm() {
     setLoading(true)
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/email-login/`, {
+      const apiUrl = getApiBaseUrl()
+      const response = await fetch(`${apiUrl}/api/users/email-login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

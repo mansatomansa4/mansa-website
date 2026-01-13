@@ -1,6 +1,13 @@
 // API Client for Django Backend
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://mansa-backend-1rr8.onrender.com/api';
 
+// Export helper to get the base API URL (without /api suffix for direct endpoint calls)
+export const getApiBaseUrl = () => {
+  return process.env.NEXT_PUBLIC_API_URL || 
+         process.env.NEXT_PUBLIC_API_BASE_URL?.replace('/api', '') || 
+         'https://mansa-backend-1rr8.onrender.com';
+};
+
 interface ApiResponse<T = any> {
   data?: T;
   error?: string;
