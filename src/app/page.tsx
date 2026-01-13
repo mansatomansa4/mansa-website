@@ -1,21 +1,69 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Navigation from '@/components/layout/Navigation';
 import HeroSection from '@/components/sections/HeroSection';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Heart, Users, BookOpen, Sparkles, Zap, Globe2, Target, Star, Trophy, Lightbulb } from 'lucide-react';
+import { ArrowRight, Heart, Users, BookOpen, Sparkles, Zap, Globe2, Target, Star, Trophy, Lightbulb, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Card } from '@/components/card';
 import NetworkCard from '@/components/NetworkCard';
+import { div } from 'framer-motion/client';
 
 export default function HomePage() {
   const { scrollYProgress } = useScroll();
   const yBg = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.3]);
   
+  // Video state
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const togglePlay = () => {
+    if (!hasInteracted) {
+      setHasInteracted(true);
+    }
+    
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        setIsLoading(true);
+        videoRef.current.play().then(() => {
+          setIsPlaying(true);
+          setIsLoading(false);
+        }).catch(e => {
+          console.error("Video play failed:", e);
+          setIsLoading(false);
+          // Fallback: try with different source or show error
+        });
+      }
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  const handleVideoLoad = () => {
+    setIsLoading(false);
+  };
+
+  const handleVideoError = (e: any) => {
+    console.error("Video loading error:", e);
+    setIsLoading(false);
+    // You could show an error message to the user here
+  };
+
   const sectionVariants = {
     hidden: { opacity: 0, y: 80, scale: 0.95 },
     visible: {
@@ -55,6 +103,197 @@ export default function HomePage() {
         <div className="-mt-0">
           <HeroSection />
         </div>
+
+        {/* Introductory Video Section - Added before Community Building */}
+        <motion.section 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={sectionVariants}
+          className="section-padding relative overflow-hidden"
+        >
+          {/* Background Gradient */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-purple-50/20 to-pink-50/20 dark:from-blue-900/10 dark:via-purple-900/10 dark:to-pink-900/10"></div>
+            <motion.div
+              className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full blur-3xl"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            />
+          </div>
+          
+          <div className="relative z-10 container-enhanced">
+            <motion.div variants={itemVariants} className="text-center mb-12">
+              {/* Video Badge */}
+           
+
+              {/* Video Heading */}
+              <motion.h2
+                variants={itemVariants}
+                className="text-2xl sm:text-3xl lg:text-4xl font-heading font-bold text-gray-900 dark:text-white mb-6"
+              >
+                Discover the{' '}
+                <span className="text-blue-600 dark:text-blue-400 font-black">
+                  Mansa-to-Mansa
+                </span>{' '}
+                Experience
+              </motion.h2>
+
+      
+            </motion.div>
+
+            {/* Video Player Container */}
+            <motion.div
+              variants={itemVariants}
+              className="relative max-w-6xl mx-auto rounded-3xl overflow-hidden shadow-2xl bg-black aspect-video"
+              whileHover={{ scale: 1.01 }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Video Element - Only loads when user interacts */}
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                preload="metadata"
+                poster="/intropic.png" // Add a poster image placeholder
+                muted={isMuted}
+                loop
+                playsInline
+                onEnded={() => setIsPlaying(false)}
+                onCanPlay={handleVideoLoad}
+                onError={handleVideoError}
+              >
+                <source
+                  src="/videos/introductory-video.mp4"
+                  type="video/mp4"
+                />
+          
+                Your browser does not support the video tag.
+              </video>
+
+              {/* Video Overlay - Shows before interaction */}
+              {!hasInteracted && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col items-center justify-center cursor-pointer"
+                  onClick={togglePlay}
+                >
+                  {/* Play Button Container - Now properly centered */}
+                  <div className="flex flex-col items-center justify-center w-full h-full">
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="relative group mb-6"
+                    >
+                      {/* Play Button Glow */}
+                      <div className="absolute inset-0 bg-blue-500 rounded-full opacity-40 blur-xl group-hover:opacity-60 transition-opacity duration-300"></div>
+                      
+                      {/* Play Button - Fixed centering */}
+                      <div className="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center shadow-2xl group-hover:shadow-3xl transition-all duration-300">
+                        <Play className="w-8 h-8 sm:w-10 sm:h-10 text-white ml-1" />
+                      </div>
+                    </motion.div>
+                    
+                    {/* Play Button Text */}
+                    <motion.p
+                      initial={{ y: 10, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="text-white font-semibold text-lg text-center"
+                    >
+                      
+                    </motion.p>
+                    
+                  
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Video Controls - Show when video has been interacted with */}
+            
+              {hasInteracted && (
+                <div className=" flex items-center justify-center">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute bottom-6  transform -translate-x-1/2 flex items-center space-x-4 bg-black/70 backdrop-blur-lg px-6 py-3 rounded-full"
+                >
+                  {/* Play/Pause Button */}
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={togglePlay}
+                    disabled={isLoading}
+                    className="w-12 h-12 bg-white/20 hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center justify-center transition-colors duration-200"
+                  >
+                    {isLoading ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : isPlaying ? (
+                      <Pause className="w-5 h-5 text-white" />
+                    ) : (
+                      <Play className="w-5 h-5 text-white ml-0.5" />
+                    )}
+                  </motion.button>
+
+                  {/* Mute/Unmute Button */}
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={toggleMute}
+                    className="w-12 h-12 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors duration-200"
+                  >
+                    {isMuted ? (
+                      <VolumeX className="w-5 h-5 text-white" />
+                    ) : (
+                      <Volume2 className="w-5 h-5 text-white" />
+                    )}
+                  </motion.button>
+
+                  {/* Video Info */}
+              
+                </motion.div>
+
+                </div>
+              )}
+
+              {/* Loading Indicator (when video is loading) */}
+              {isLoading && (
+                <motion.div
+                  className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  <div className="text-white text-center">
+                    <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-lg font-medium">Loading video...</p>
+                 
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Fallback if video fails to load */}
+              {hasInteracted && !isLoading && videoRef.current?.error && (
+                <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center text-white p-8 text-center">
+                  <div className="text-red-400 mb-4">
+                    <VolumeX className="w-16 h-16 mx-auto" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Video Failed to Load</h3>
+                  <p className="text-white/70 mb-6">
+                    There was an issue loading the video. Please check your internet connection or try again later.
+                  </p>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-full font-medium transition-colors"
+                  >
+                    Reload Page
+                  </button>
+                </div>
+              )}
+            </motion.div>
+
+    
+          </div>
+        </motion.section>
 
         {/* Professional Community Section */}
         <motion.section 
@@ -370,7 +609,6 @@ export default function HomePage() {
           </div>
         </motion.section>
 
-        {/* Rest of sections with premium styling... */}
         {/* Knowledge Hub Section */}
         <motion.section 
           initial="hidden"
