@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -12,7 +13,11 @@ import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import { CardSkeleton } from '@/components/ui/Skeleton'
 import { NoMentorsFound } from '@/components/ui/EmptyState'
-import ErrorBoundary from '@/components/ui/ErrorBoundary'
+
+// Dynamically import ErrorBoundary to avoid SSR issues
+const ErrorBoundary = dynamic(() => import('@/components/ui/ErrorBoundary'), {
+  ssr: false
+})
 
 interface Mentor {
   id: string
@@ -57,17 +62,31 @@ export default function MentorshipPage() {
     // Check authentication
     const token = localStorage.getItem('access_token')
     const userEmail = localStorage.getItem('user_email')
+    const isMentor = localStorage.getItem('is_mentor') === 'true'
+    const isMentee = localStorage.getItem('is_mentee') === 'true'
     
     if (!token || !userEmail) {
       // Redirect to auth page if not logged in
       router.push('/community/mentorship/auth?redirect=/community/mentorship')
       return
     }
+
+    // Redirect based on user role
+    if (isMentor && !isMentee) {
+      // Pure mentor -> redirect to mentor dashboard
+      router.push('/community/mentorship/mentor')
+      return
+    }
     
     setIsAuthenticated(true)
-    fetchMentors()
-    fetchExpertiseCategories()
-  }, [page, selectedExpertise, router])
+  }, [router])
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchMentors()
+      fetchExpertiseCategories()
+    }
+  }, [page, selectedExpertise, isAuthenticated])
 
   // Don't render content if not authenticated
   if (!isAuthenticated) {

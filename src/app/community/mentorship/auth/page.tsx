@@ -70,7 +70,14 @@ function AuthForm() {
 
     } catch (err: any) {
       console.error('Login error:', err)
-      setError(err.message || 'Failed to login. Please check your email and try again.')
+      // Provide more helpful error messages based on error type
+      if (err.message.includes('Email not found')) {
+        setError('This email is not registered in our database. Please check your email or contact the admin team to get registered.')
+      } else if (err.message.includes('network') || err.message.includes('Failed to fetch')) {
+        setError('Network error. Please check your internet connection and try again.')
+      } else {
+        setError(err.message || 'Failed to login. Please check your email and try again.')
+      }
     } finally {
       setLoading(false)
     }
