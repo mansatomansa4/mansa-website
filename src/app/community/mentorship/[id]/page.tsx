@@ -25,7 +25,7 @@ interface Mentor {
     last_name: string
     email: string
   }
-  bio: string
+  bio?: string
   photo_url?: string
   profile_picture?: string  // Alias from member
   expertise: Array<{
@@ -39,7 +39,7 @@ interface Mentor {
   jobtitle?: string  // Alias from member
   occupation?: string
   years_of_experience?: number
-  timezone: string
+  timezone?: string
   linkedin_url?: string
   github_url?: string
   twitter_url?: string
@@ -380,10 +380,12 @@ export default function MentorDetailPage() {
                 )}
 
                 {/* Timezone */}
-                <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  <span>Timezone: {mentor.timezone}</span>
-                </div>
+                {mentor.timezone && (
+                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    <span>Timezone: {mentor.timezone}</span>
+                  </div>
+                )}
               </motion.div>
             </div>
 
@@ -398,19 +400,21 @@ export default function MentorDetailPage() {
               >
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">About Me</h2>
                 <p className="text-gray-600 dark:text-gray-300 whitespace-pre-line leading-relaxed">
-                  {mentor.bio}
+                  {mentor.bio || 'No bio available yet.'}
                 </p>
               </motion.div>
 
               {/* Timezone Converter */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 }}
-                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
-              >
-                <TimezoneConverter mentorTimezone={mentor.timezone} />
-              </motion.div>
+              {mentor.timezone && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
+                >
+                  <TimezoneConverter mentorTimezone={mentor.timezone} />
+                </motion.div>
+              )}
 
               {/* Booking Section */}
               <motion.div
@@ -431,7 +435,7 @@ export default function MentorDetailPage() {
                     setShowBookingModal(true)
                   }}
                   selectedSlot={selectedSlot}
-                  mentorTimezone={mentor.timezone}
+                  mentorTimezone={mentor.timezone || 'UTC'}
                 />
 
                 {selectedSlot && !showBookingModal && (
@@ -457,7 +461,7 @@ export default function MentorDetailPage() {
         onClose={() => setShowBookingModal(false)}
         slot={selectedSlot}
         mentorName={`${mentor.user?.first_name || mentor.name?.split(' ')[0] || ''} ${mentor.user?.last_name || mentor.name?.split(' ').slice(1).join(' ') || ''}`}
-        mentorTimezone={mentor.timezone}
+        mentorTimezone={mentor.timezone || 'UTC'}
         onConfirm={handleBooking}
       />
 
