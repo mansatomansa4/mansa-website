@@ -151,7 +151,7 @@ export default function MentorApplicationPage() {
     try {
       const token = localStorage.getItem('access_token')
       if (!token) {
-        router.push('/login?redirect=/community/mentorship/mentor/apply')
+        router.push('/community/mentorship/auth?redirect=/community/mentorship/mentor/apply')
         return
       }
 
@@ -187,7 +187,7 @@ export default function MentorApplicationPage() {
       })
 
       if (response.status === 401) {
-        router.push('/login?redirect=/community/mentorship/mentor/apply')
+        router.push('/community/mentorship/auth?redirect=/community/mentorship/mentor/apply')
         return
       }
 
@@ -692,3 +692,4 @@ export default function MentorApplicationPage() {
     </div>
   )
 }
+

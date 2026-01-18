@@ -3,11 +3,13 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
-import { Menu, X, Sun, Moon, Users, BookOpen, Heart, Briefcase, DollarSign, Facebook, Twitter, Instagram, Linkedin, ChevronDown, Github, FileText, Cpu, List, Calendar, Rocket } from 'lucide-react'
+import { Menu, X, Sun, Moon, Users, BookOpen, Heart, Briefcase, DollarSign, Facebook, Twitter, Instagram, Linkedin, ChevronDown, Github, FileText, Cpu, List, Calendar, Rocket, Settings, LogOut, User } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const Navigation = () => {
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -15,10 +17,30 @@ const Navigation = () => {
   const [showMobileCommunityDropdown, setShowMobileCommunityDropdown] = useState(false)
   const [showProjectsDropdown, setShowProjectsDropdown] = useState(false)
   const [showMobileProjectsDropdown, setShowMobileProjectsDropdown] = useState(false)
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const [userInfo, setUserInfo] = useState<any>(null)
   const { theme, setTheme } = useTheme()
 
   useEffect(() => {
     setMounted(true)
+    
+    // Load user info from localStorage
+    const token = localStorage.getItem('access_token')
+    const userEmail = localStorage.getItem('user_email')
+    const userName = localStorage.getItem('user_name')
+    const isMentor = localStorage.getItem('is_mentor') === 'true'
+    const isMentee = localStorage.getItem('is_mentee') === 'true'
+    
+    if (token && userEmail) {
+      const nameParts = userName?.split(' ') || ['', '']
+      setUserInfo({
+        email: userEmail,
+        first_name: nameParts[0] || '',
+        last_name: nameParts.slice(1).join(' ') || '',
+        is_mentor: isMentor,
+        is_mentee: isMentee
+      })
+    }
     
     const handleScroll = () => {
       setScrolled(window.scrollY > 20)
@@ -27,6 +49,12 @@ const Navigation = () => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const handleLogout = () => {
+    localStorage.clear()
+    setUserInfo(null)
+    router.push('/')
+  }
 
   const navItems = [
     { href: '/', label: 'Home', icon: Users },
@@ -268,19 +296,123 @@ const Navigation = () => {
                 )}
               </motion.button>
 
-              {/* Join Community Button */}
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="hidden lg:block"
-              >
-                <Link
-                  href="/signup"
-                  className="btn-primary text-sm xl:text-base px-4 py-2 xl:px-6 xl:py-3"
+              {/* User Menu or Join Button */}
+              {userInfo ? (
+                <div 
+                  className="hidden lg:block relative"
+                  onMouseEnter={() => setShowUserMenu(true)}
+                  onMouseLeave={() => setShowUserMenu(false)}
                 >
-                  Join Community
-                </Link>
-              </motion.div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl border-2 border-gray-200 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-200 shadow-sm"
+                  >
+                    <div className="relative">
+                      <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 rounded-lg flex items-center justify-center text-white font-bold text-sm shadow-md">
+                        {userInfo.first_name[0]}{userInfo.last_name[0]}
+                      </div>
+                      <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white leading-tight">
+                        {userInfo.first_name} {userInfo.last_name}
+                      </p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        {userInfo.is_mentor && (
+                          <span className="px-2 py-0.5 text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded-md">Mentor</span>
+                        )}
+                        {userInfo.is_mentee && (
+                          <span className="px-2 py-0.5 text-[10px] font-semibold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded-md">Mentee</span>
+                        )}
+                      </div>
+                    </div>
+                    <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  </motion.button>
+
+                  {/* User Dropdown Menu */}
+                  <AnimatePresence>
+                    {showUserMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-full right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-gray-100 dark:border-gray-700 overflow-hidden z-50"
+                      >
+                        {/* User Info Header */}
+                        <div className="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 border-b border-gray-200 dark:border-gray-600">
+                          <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                            {userInfo.first_name} {userInfo.last_name}
+                          </p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{userInfo.email}</p>
+                        </div>
+
+                        {/* Menu Items */}
+                        <div className="py-2">
+                          {userInfo.is_mentor && (
+                            <Link
+                              href="/community/mentorship/mentor"
+                              className="flex items-center gap-3 px-4 py-3 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors duration-150"
+                            >
+                              <Settings className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                              <div>
+                                <div className="font-medium text-gray-900 dark:text-white text-sm">Mentor Dashboard</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">Manage your mentorship</div>
+                              </div>
+                            </Link>
+                          )}
+                          {userInfo.is_mentee && (
+                            <Link
+                              href="/community/mentorship/bookings"
+                              className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors duration-150"
+                            >
+                              <BookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                              <div>
+                                <div className="font-medium text-gray-900 dark:text-white text-sm">My Bookings</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">View your sessions</div>
+                              </div>
+                            </Link>
+                          )}
+                          <Link
+                            href="/community/mentorship"
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150"
+                          >
+                            <Users className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                            <div>
+                              <div className="font-medium text-gray-900 dark:text-white text-sm">Mentorship</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">Browse mentors</div>
+                            </div>
+                          </Link>
+                          <button
+                            onClick={handleLogout}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors duration-150 text-left"
+                          >
+                            <LogOut className="w-5 h-5 text-red-600 dark:text-red-400" />
+                            <div>
+                              <div className="font-medium text-red-600 dark:text-red-400 text-sm">Logout</div>
+                              <div className="text-xs text-red-500 dark:text-red-400/70">Sign out of your account</div>
+                            </div>
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="hidden lg:block"
+                >
+                  <Link
+                    href="/signup"
+                    className="btn-primary text-sm xl:text-base px-4 py-2 xl:px-6 xl:py-3"
+                  >
+                    Join Community
+                  </Link>
+                </motion.div>
+              )}
 
               {/* Mobile menu button */}
               <motion.button

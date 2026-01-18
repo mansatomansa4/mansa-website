@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import { 
   Calendar, Clock, Users, Award, TrendingUp, CheckCircle,
   AlertCircle, XCircle, User, Settings, Edit3, Video,
-  MessageSquare, Star, ArrowRight, Bell
+  MessageSquare, Star, ArrowRight, Bell, LogOut, BookOpen
 } from 'lucide-react'
 import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
@@ -65,7 +65,7 @@ export default function MentorDashboardPage() {
     try {
       const token = localStorage.getItem('access_token')
       if (!token) {
-        router.push('/login?redirect=/community/mentorship/mentor')
+        router.push('/community/mentorship/auth?redirect=/community/mentorship/mentor')
         return
       }
 
@@ -81,7 +81,7 @@ export default function MentorDashboardPage() {
       }
 
       if (profileResponse.status === 401) {
-        router.push('/login?redirect=/community/mentorship/mentor')
+        router.push('/community/mentorship/auth?redirect=/community/mentorship/mentor')
         return
       }
 
@@ -158,7 +158,62 @@ export default function MentorDashboardPage() {
     return (
       <div className="relative flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900">
         <Navigation />
-        <main className="relative pt-20 pb-16 flex-1 flex items-center justify-center px-4">
+        
+        {/* User Info Bar */}
+        <div className="fixed top-16 right-0 left-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  {profile.photo_url ? (
+                    <img
+                      src={profile.photo_url}
+                      alt={profile.user.name}
+                      className="w-10 h-10 rounded-full object-cover border-2 border-amber-500"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+                      {profile.user.name.split(' ').map((n: string) => n[0]).join('')}
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                      {profile.user.name}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{profile.user.email}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="px-3 py-1 text-xs font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    Pending Approval
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Link
+                  href="/community/mentorship"
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                >
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Browse Mentors
+                </Link>
+                <button
+                  onClick={() => {
+                    localStorage.clear()
+                    window.location.href = '/community/mentorship/auth'
+                  }}
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <main className="relative flex-1 flex items-center justify-center px-4" style={{ paddingTop: '7rem' }}>
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -207,7 +262,66 @@ export default function MentorDashboardPage() {
     <div className="relative flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900">
       <Navigation />
 
-      <main className="relative pt-20 pb-16">
+      {/* User Info Bar */}
+      <div className="fixed top-16 right-0 left-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                {profile.photo_url ? (
+                  <img
+                    src={profile.photo_url}
+                    alt={profile.user.name}
+                    className="w-10 h-10 rounded-full object-cover border-2 border-emerald-500"
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+                    {profile.user.name.split(' ').map((n: string) => n[0]).join('')}
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                    {profile.user.name}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{profile.user.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="px-3 py-1 text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full">
+                  Mentor
+                </span>
+                {profile.is_approved && (
+                  <span className="px-3 py-1 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3" />
+                    Approved
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Link
+                href="/community/mentorship"
+                className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+              >
+                <BookOpen className="w-4 h-4 mr-2" />
+                Browse Mentors
+              </Link>
+              <button
+                onClick={() => {
+                  localStorage.clear()
+                  window.location.href = '/community/mentorship/auth'
+                }}
+                className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <main className="relative pb-16" style={{ paddingTop: '7rem' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
@@ -565,3 +679,4 @@ export default function MentorDashboardPage() {
     </div>
   )
 }
+

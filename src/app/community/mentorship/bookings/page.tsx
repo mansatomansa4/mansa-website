@@ -59,7 +59,7 @@ export default function MyBookingsPage() {
     try {
       const token = localStorage.getItem('access_token')
       if (!token) {
-        router.push('/login?redirect=/community/mentorship/bookings')
+        router.push('/community/mentorship/auth?redirect=/community/mentorship/bookings')
         return
       }
 
@@ -73,7 +73,7 @@ export default function MyBookingsPage() {
       )
 
       if (response.status === 401) {
-        router.push('/login?redirect=/community/mentorship/bookings')
+        router.push('/community/mentorship/auth?redirect=/community/mentorship/bookings')
         return
       }
 
