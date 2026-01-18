@@ -17,21 +17,27 @@ import BookingModal from '@/components/mentor-hub/BookingModal'
 
 interface Mentor {
   id: string
-  user: {
+  member_id?: string
+  name?: string  // From member data
+  email?: string  // From member data
+  user?: {
     first_name: string
     last_name: string
     email: string
   }
   bio: string
   photo_url?: string
+  profile_picture?: string  // Alias from member
   expertise: Array<{
     category: string
     subcategories?: string[]
-  }>
+  }> | string[]
   rating: number
   total_sessions: number
   company?: string
   job_title?: string
+  jobtitle?: string  // Alias from member
+  occupation?: string
   years_of_experience?: number
   timezone: string
   linkedin_url?: string
@@ -247,19 +253,25 @@ export default function MentorDetailPage() {
               >
                 {/* Profile Photo */}
                 <div className="text-center mb-6">
-                  {mentor.photo_url ? (
-                    <img
-                      src={mentor.photo_url}
-                      alt={`${mentor.user.first_name} ${mentor.user.last_name}`}
-                      className="w-32 h-32 rounded-full mx-auto object-cover mb-4"
-                    />
-                  ) : (
-                    <div className="w-32 h-32 rounded-full mx-auto bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center text-white font-bold text-4xl mb-4">
-                      {mentor.user.first_name[0]}{mentor.user.last_name[0]}
-                    </div>
-                  )}
+                  {(() => {
+                    const photoUrl = mentor.photo_url || mentor.profile_picture
+                    const firstName = mentor.user?.first_name || mentor.name?.split(' ')[0] || ''
+                    const lastName = mentor.user?.last_name || mentor.name?.split(' ').slice(1).join(' ') || ''
+                    
+                    return photoUrl ? (
+                      <img
+                        src={photoUrl}
+                        alt={`${firstName} ${lastName}`}
+                        className="w-32 h-32 rounded-full mx-auto object-cover mb-4"
+                      />
+                    ) : (
+                      <div className="w-32 h-32 rounded-full mx-auto bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center text-white font-bold text-4xl mb-4">
+                        {firstName[0] || 'M'}{lastName[0] || 'M'}
+                      </div>
+                    )
+                  })()}
                   <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1 flex items-center gap-2">
-                    {mentor.user.first_name} {mentor.user.last_name}
+                    {mentor.user?.first_name || mentor.name?.split(' ')[0] || ''} {mentor.user?.last_name || mentor.name?.split(' ').slice(1).join(' ') || ''}
                     <button
                       onClick={toggleFavorite}
                       className="ml-2 p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
@@ -270,9 +282,12 @@ export default function MentorDetailPage() {
                       />
                     </button>
                   </h1>
-                  {mentor.job_title && (
-                    <p className="text-gray-600 dark:text-gray-400 mb-1">{mentor.job_title}</p>
-                  )}
+                  {(() => {
+                    const jobTitle = mentor.job_title || mentor.jobtitle || mentor.occupation
+                    return jobTitle && (
+                      <p className="text-gray-600 dark:text-gray-400 mb-1">{jobTitle}</p>
+                    )
+                  })()}
                   {mentor.company && (
                     <p className="text-sm text-gray-500 dark:text-gray-500">{mentor.company}</p>
                   )}
@@ -309,14 +324,17 @@ export default function MentorDetailPage() {
                     Expertise
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {mentor.expertise.map((exp, idx) => (
-                      <span
-                        key={idx}
-                        className="px-3 py-1 text-sm font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full"
-                      >
-                        {exp.category}
-                      </span>
-                    ))}
+                    {Array.isArray(mentor.expertise) && mentor.expertise.map((exp, idx) => {
+                      const category = typeof exp === 'string' ? exp : exp.category
+                      return (
+                        <span
+                          key={idx}
+                          className="px-3 py-1 text-sm font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full"
+                        >
+                          {category}
+                        </span>
+                      )
+                    })}
                   </div>
                 </div>
 
@@ -438,7 +456,7 @@ export default function MentorDetailPage() {
         isOpen={showBookingModal}
         onClose={() => setShowBookingModal(false)}
         slot={selectedSlot}
-        mentorName={`${mentor.user.first_name} ${mentor.user.last_name}`}
+        mentorName={`${mentor.user?.first_name || mentor.name?.split(' ')[0] || ''} ${mentor.user?.last_name || mentor.name?.split(' ').slice(1).join(' ') || ''}`}
         mentorTimezone={mentor.timezone}
         onConfirm={handleBooking}
       />
