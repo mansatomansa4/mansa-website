@@ -22,6 +22,16 @@ const ErrorBoundary = dynamic(() => import('@/components/ui/ErrorBoundary'), {
 
 interface Mentor {
   id: string
+  member_id?: string
+  name?: string  // From member data
+  email?: string  // From member data
+  phone?: string
+  country?: string
+  city?: string
+  location?: string
+  linkedin?: string
+  experience?: string
+  areaofexpertise?: string
   user: {
     first_name: string
     last_name: string
@@ -29,15 +39,20 @@ interface Mentor {
   }
   bio: string
   photo_url?: string
+  profile_picture?: string  // Alias for photo_url from member
   expertise: Array<{
     category: string
     subcategories?: string[]
-  }>
+  }> | string[]  // Can be array of strings or objects
   rating: number
   total_sessions: number
   company?: string
   job_title?: string
+  jobtitle?: string  // Alias from member
+  occupation?: string
   years_of_experience?: number
+  is_approved: boolean
+  member_data?: any  // Full member data if needed
 }
 
 interface ExpertiseCategory {
@@ -185,12 +200,29 @@ export default function MentorshipPage() {
   const filteredMentors = mentors.filter(mentor => {
     if (!searchQuery) return true
     const query = searchQuery.toLowerCase()
+    
+    // Support both new structure (with name/email at top level) and legacy (nested in user)
+    const firstName = mentor.user?.first_name || mentor.name?.split(' ')[0] || ''
+    const lastName = mentor.user?.last_name || mentor.name?.split(' ').slice(1).join(' ') || ''
+    const jobTitle = mentor.job_title || mentor.jobtitle || mentor.occupation || ''
+    
+    // Handle expertise as either array of strings or array of objects
+    const expertiseMatch = Array.isArray(mentor.expertise) 
+      ? mentor.expertise.some(exp => {
+          if (typeof exp === 'string') {
+            return exp.toLowerCase().includes(query)
+          }
+          return exp.category?.toLowerCase().includes(query)
+        })
+      : false
+    
     return (
-      mentor.user.first_name.toLowerCase().includes(query) ||
-      mentor.user.last_name.toLowerCase().includes(query) ||
-      mentor.job_title?.toLowerCase().includes(query) ||
+      firstName.toLowerCase().includes(query) ||
+      lastName.toLowerCase().includes(query) ||
+      jobTitle.toLowerCase().includes(query) ||
       mentor.company?.toLowerCase().includes(query) ||
-      mentor.expertise.some(e => e.category.toLowerCase().includes(query))
+      mentor.areaofexpertise?.toLowerCase().includes(query) ||
+      expertiseMatch
     )
   })
 
@@ -412,64 +444,90 @@ export default function MentorshipPage() {
                             {/* Header with Photo */}
                             <div className="flex items-start gap-4 mb-5">
                               <div className="relative flex-shrink-0">
-                                {mentor.photo_url ? (
-                                  <>
-                                    <img
-                                      src={mentor.photo_url}
-                                      alt={`${mentor.user.first_name} ${mentor.user.last_name}`}
-                                      className="w-20 h-20 rounded-2xl object-cover ring-4 ring-gray-100 dark:ring-gray-800 group-hover:ring-emerald-500/50 transition-all duration-300"
-                                    />
-                                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-4 border-white dark:border-gray-900 rounded-full"></div>
-                                  </>
-                                ) : (
-                                  <>
-                                    <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-emerald-500/30 ring-4 ring-gray-100 dark:ring-gray-800 group-hover:ring-emerald-500/50 transition-all duration-300">
-                                      {mentor.user.first_name[0]}{mentor.user.last_name[0]}
-                                    </div>
-                                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-4 border-white dark:border-gray-900 rounded-full"></div>
-                                  </>
-                                )}
+                                {(() => {
+                                  const photoUrl = mentor.photo_url || mentor.profile_picture
+                                  const firstName = mentor.user?.first_name || mentor.name?.split(' ')[0] || ''
+                                  const lastName = mentor.user?.last_name || mentor.name?.split(' ').slice(1).join(' ') || ''
+                                  
+                                  return photoUrl ? (
+                                    <>
+                                      <img
+                                        src={photoUrl}
+                                        alt={`${firstName} ${lastName}`}
+                                        className="w-20 h-20 rounded-2xl object-cover ring-4 ring-gray-100 dark:ring-gray-800 group-hover:ring-emerald-500/50 transition-all duration-300"
+                                      />
+                                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-4 border-white dark:border-gray-900 rounded-full"></div>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 via-teal-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-emerald-500/30 ring-4 ring-gray-100 dark:ring-gray-800 group-hover:ring-emerald-500/50 transition-all duration-300">
+                                        {firstName[0] || 'M'}{lastName[0] || 'M'}
+                                      </div>
+                                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-4 border-white dark:border-gray-900 rounded-full"></div>
+                                    </>
+                                  )
+                                })()}
                               </div>
                               <div className="flex-1 min-w-0 pt-1">
                                 <h3 className="font-bold text-lg text-gray-900 dark:text-white truncate mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                                  {mentor.user.first_name} {mentor.user.last_name}
+                                  {mentor.user?.first_name || mentor.name?.split(' ')[0] || ''} {mentor.user?.last_name || mentor.name?.split(' ').slice(1).join(' ') || ''}
                                 </h3>
-                                {mentor.job_title && (
-                                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate mb-0.5">
-                                    {mentor.job_title}
-                                  </p>
-                                )}
-                                {mentor.company && (
-                                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate flex items-center gap-1">
-                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                      <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
-                                    </svg>
-                                    {mentor.company}
-                                  </p>
-                                )}
+                                {(() => {
+                                  const jobTitle = mentor.job_title || mentor.jobtitle || mentor.occupation
+                                  return jobTitle && (
+                                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate mb-0.5">
+                                      {jobTitle}
+                                    </p>
+                                  )
+                                })()}
+                                {(() => {
+                                  const location = mentor.company || mentor.city || mentor.location
+                                  return location && (
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate flex items-center gap-1">
+                                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
+                                      </svg>
+                                      {location}
+                                    </p>
+                                  )
+                                })()}
                               </div>
                             </div>
 
                             {/* Bio */}
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-5 line-clamp-2 leading-relaxed">
-                              {mentor.bio}
+                              {mentor.bio || 'Experienced mentor ready to help you grow.'}
                             </p>
 
                             {/* Expertise Tags */}
                             <div className="flex flex-wrap gap-2 mb-5">
-                              {mentor.expertise.slice(0, 3).map((exp, idx) => (
-                                <span
-                                  key={idx}
-                                  className="inline-flex items-center px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 text-emerald-700 dark:text-emerald-300 rounded-lg border border-emerald-200 dark:border-emerald-800"
-                                >
-                                  {exp.category}
-                                </span>
-                              ))}
-                              {mentor.expertise.length > 3 && (
-                                <span className="inline-flex items-center px-3 py-1.5 text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-lg border border-gray-200 dark:border-gray-700">
-                                  +{mentor.expertise.length - 3} more
-                                </span>
-                              )}
+                              {(() => {
+                                const expertiseArray = Array.isArray(mentor.expertise) 
+                                  ? mentor.expertise 
+                                  : mentor.areaofexpertise 
+                                    ? [mentor.areaofexpertise]
+                                    : []
+                                
+                                return expertiseArray.slice(0, 3).map((exp, idx) => {
+                                  const label = typeof exp === 'string' ? exp : exp.category
+                                  return (
+                                    <span
+                                      key={idx}
+                                      className="inline-flex items-center px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 text-emerald-700 dark:text-emerald-300 rounded-lg border border-emerald-200 dark:border-emerald-800"
+                                    >
+                                      {label}
+                                    </span>
+                                  )
+                                })
+                              })()}
+                              {(() => {
+                                const expertiseArray = Array.isArray(mentor.expertise) ? mentor.expertise : []
+                                return expertiseArray.length > 3 && (
+                                  <span className="inline-flex items-center px-3 py-1.5 text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-lg border border-gray-200 dark:border-gray-700">
+                                    +{expertiseArray.length - 3} more
+                                  </span>
+                                )
+                              })()}
                             </div>
 
                             {/* Stats Footer */}
@@ -477,11 +535,11 @@ export default function MentorshipPage() {
                               <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-1.5">
                                   <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
-                                  <span className="text-sm font-bold text-gray-900 dark:text-white">{mentor.rating.toFixed(1)}</span>
+                                  <span className="text-sm font-bold text-gray-900 dark:text-white">{(mentor.rating || 0).toFixed(1)}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
                                   <CheckCircle className="w-4 h-4" />
-                                  <span className="text-sm font-medium">{mentor.total_sessions}</span>
+                                  <span className="text-sm font-medium">{mentor.total_sessions || 0}</span>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-semibold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
