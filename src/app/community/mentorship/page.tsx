@@ -32,7 +32,7 @@ interface Mentor {
   linkedin?: string
   experience?: string
   areaofexpertise?: string
-  user: {
+  user?: {
     first_name: string
     last_name: string
     email: string
