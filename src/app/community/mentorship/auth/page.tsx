@@ -51,22 +51,26 @@ function AuthForm() {
 
       setSuccess(true)
 
-      // Redirect based on user role
+      // Redirect based on user role with feedback
       setTimeout(() => {
         if (data.user.is_mentor && !data.user.is_mentee) {
           // Pure mentor -> go to mentor dashboard
+          console.log('✓ Logged in as Mentor - Redirecting to mentor dashboard')
           router.push('/community/mentorship/mentor')
         } else if (data.user.is_mentee && !data.user.is_mentor) {
           // Pure mentee -> go to browse mentors
+          console.log('✓ Logged in as Mentee - Redirecting to mentorship platform')
           router.push(redirect)
         } else if (data.user.is_mentor && data.user.is_mentee) {
           // Both roles -> let them choose or go to mentorship hub
+          console.log('✓ Logged in as Mentor & Mentee - Redirecting to mentorship hub')
           router.push('/community/mentorship')
         } else {
           // Neither role -> allow them to explore or apply as mentor
+          console.log('✓ Logged in - Explore mentorship opportunities')
           router.push('/community/mentorship')
         }
-      }, 1000)
+      }, 1500)
 
     } catch (err: any) {
       console.error('Login error:', err)
@@ -109,13 +113,24 @@ function AuthForm() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3"
+                className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg"
               >
-                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-green-900">Login successful!</p>
-                  <p className="text-sm text-green-700">Redirecting you now...</p>
+                <div className="flex items-start gap-3 mb-2">
+                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-green-900">Login successful!</p>
+                    <p className="text-xs text-green-700 mt-1">
+                      {localStorage.getItem('is_mentor') === 'true' && localStorage.getItem('is_mentee') === 'true' 
+                        ? '✓ You have both Mentor and Mentee access'
+                        : localStorage.getItem('is_mentor') === 'true'
+                        ? '✓ Logged in as Mentor'
+                        : localStorage.getItem('is_mentee') === 'true'
+                        ? '✓ Logged in as Mentee'
+                        : '✓ Welcome to MentorHub'}
+                    </p>
+                  </div>
                 </div>
+                <p className="text-xs text-green-600 pl-8">Redirecting to your dashboard...</p>
               </motion.div>
             )}
 

@@ -96,7 +96,7 @@ export default function MentorshipPage() {
   }
 
   useEffect(() => {
-    // Check authentication and load user info
+    // Check authentication - REQUIRED for mentorship platform
     const token = localStorage.getItem('access_token')
     const userEmail = localStorage.getItem('user_email')
     const userName = localStorage.getItem('user_name')
@@ -105,13 +105,13 @@ export default function MentorshipPage() {
     const isMentee = localStorage.getItem('is_mentee') === 'true'
     const userRole = localStorage.getItem('user_role') || 'user'
     
+    // Redirect to landing page if not authenticated
     if (!token || !userEmail) {
-      // Redirect to auth page if not logged in
-      router.push('/community/mentorship/auth?redirect=/community/mentorship')
+      router.push('/community/mentorship/landing')
       return
     }
-
-    // Set user info from localStorage
+    
+    // Set user info from localStorage if logged in
     const nameParts = userName?.split(' ') || ['', '']
     setUserInfo({
       id: userId || '',
@@ -122,8 +122,11 @@ export default function MentorshipPage() {
       is_mentee: isMentee,
       role: userRole
     })
-    
     setIsAuthenticated(true)
+    
+    // Load mentors after authentication check passes
+    fetchMentors()
+    fetchExpertiseCategories()
   }, [router])
 
   // Define fetch functions before useEffect
@@ -140,8 +143,7 @@ export default function MentorshipPage() {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/mentors/?${params}`,
-        { headers: getAuthHeaders() }
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/mentors/?${params}`
       )
       
       if (!response.ok) {
@@ -164,8 +166,7 @@ export default function MentorshipPage() {
   const fetchExpertiseCategories = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/expertise/`,
-        { headers: getAuthHeaders() }
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/expertise/`
       )
       
       if (!response.ok) {
@@ -186,16 +187,9 @@ export default function MentorshipPage() {
   }
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchMentors()
-      fetchExpertiseCategories()
-    }
-  }, [page, selectedExpertise, isAuthenticated])
-
-  // Don't render content if not authenticated
-  if (!isAuthenticated) {
-    return null
-  }
+    fetchMentors()
+    fetchExpertiseCategories()
+  }, [page, selectedExpertise])
 
   const filteredMentors = mentors.filter(mentor => {
     if (!searchQuery) return true
@@ -312,7 +306,7 @@ export default function MentorshipPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+              className="flex justify-center"
             >
               <a
                 href="#mentors"
@@ -321,13 +315,6 @@ export default function MentorshipPage() {
                 <Search className="w-5 h-5 transition-transform group-hover:scale-110" />
                 Browse Mentors
               </a>
-              <Link
-                href="/community/mentorship/mentor/apply"
-                className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-white dark:bg-gray-900 text-emerald-700 dark:text-emerald-300 font-semibold rounded-xl transition-all duration-300 border-2 border-emerald-200 dark:border-emerald-800 hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 hover:scale-105 min-w-[200px]"
-              >
-                <Award className="w-5 h-5 transition-transform group-hover:scale-110" />
-                Become a Mentor
-              </Link>
             </motion.div>
           </div>
         </section>
@@ -659,18 +646,12 @@ export default function MentorshipPage() {
               <p className="text-xl text-emerald-50 mb-8 max-w-2xl mx-auto">
                 Join hundreds of professionals who have accelerated their careers through mentorship
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex justify-center">
                 <Link
                   href="#mentors"
                   className="inline-flex items-center justify-center px-8 py-3 bg-white text-emerald-600 font-medium rounded-lg hover:bg-emerald-50 transition-colors"
                 >
                   Find a Mentor
-                </Link>
-                <Link
-                  href="/signup"
-                  className="inline-flex items-center justify-center px-8 py-3 border-2 border-white text-white font-medium rounded-lg hover:bg-white/10 transition-colors"
-                >
-                  Become a Mentor
                 </Link>
               </div>
             </motion.div>

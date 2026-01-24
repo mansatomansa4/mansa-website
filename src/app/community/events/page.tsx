@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { Calendar, MapPin, Clock, Users, ArrowRight, Download, Image as ImageIcon } from 'lucide-react'
 import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
+import { getApiBaseUrl } from '@/lib/api'
 
 // Event type matching backend model
 interface Event {
@@ -44,8 +45,8 @@ export default function EventsPage() {
     try {
       setLoading(true)
       // Fetch events from backend API
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api'
-      const response = await fetch(`${apiBaseUrl}/events/?published=true`)
+      const apiBaseUrl = getApiBaseUrl()
+      const response = await fetch(`${apiBaseUrl}/api/events/?published=true`)
       
       if (response.ok) {
         const data = await response.json()

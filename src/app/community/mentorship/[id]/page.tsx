@@ -75,6 +75,13 @@ export default function MentorDetailPage() {
   const [isFavorite, setIsFavorite] = useState(false)
 
   useEffect(() => {
+    // Check authentication before accessing mentor details
+    const token = localStorage.getItem('access_token')
+    if (!token) {
+      router.push(`/community/mentorship/auth?redirect=/community/mentorship/${mentorId}`)
+      return
+    }
+    
     if (mentorId) {
       fetchMentorDetails()
       fetchAvailability()
@@ -83,7 +90,7 @@ export default function MentorDetailPage() {
       const favorites = JSON.parse(localStorage.getItem('favoriteMentors') || '[]')
       setIsFavorite(favorites.includes(mentorId))
     }
-  }, [mentorId])
+  }, [mentorId, router])
 
   const toggleFavorite = () => {
     const favorites = JSON.parse(localStorage.getItem('favoriteMentors') || '[]')

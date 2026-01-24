@@ -90,7 +90,24 @@ export default function EditMentorProfilePage() {
       }
 
       const data = await response.json()
-      setFormData(data)
+      
+      // Ensure expertise is an array
+      const expertise = Array.isArray(data.expertise) 
+        ? data.expertise 
+        : (typeof data.expertise === 'string' ? JSON.parse(data.expertise) : [])
+      
+      setFormData({
+        ...data,
+        expertise,
+        company: data.company || '',
+        job_title: data.job_title || '',
+        years_of_experience: data.years_of_experience || 0,
+        linkedin_url: data.linkedin_url || '',
+        github_url: data.github_url || '',
+        twitter_url: data.twitter_url || '',
+        availability_timezone: data.availability_timezone || 'UTC'
+      })
+      
       if (data.photo_url) {
         setPhotoPreview(data.photo_url)
       }

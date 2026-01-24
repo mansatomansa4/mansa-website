@@ -119,18 +119,20 @@ export default function EditMentorProfilePage() {
 
       const data: MentorProfile = await response.json()
       setFormData({
-        bio: data.bio,
-        expertise: data.expertise.map(e => e.category),
-        timezone: data.timezone,
+        bio: data.bio || '',
+        expertise: Array.isArray(data.expertise) 
+          ? data.expertise.map(e => typeof e === 'string' ? e : e.category)
+          : [],
+        timezone: data.timezone || 'UTC',
         photoFile: null,
         photoPreview: data.photo_url || '',
         linkedin_url: data.linkedin_url || '',
         github_url: data.github_url || '',
         twitter_url: data.twitter_url || '',
         company: data.company || '',
-        job_title: data.job_title,
-        years_of_experience: data.years_of_experience.toString(),
-        is_accepting_requests: data.is_accepting_requests
+        job_title: data.job_title || '',
+        years_of_experience: data.years_of_experience?.toString() || '',
+        is_accepting_requests: data.is_accepting_requests ?? true
       })
     } catch (err: any) {
       alert(err.message || 'Failed to load profile')
