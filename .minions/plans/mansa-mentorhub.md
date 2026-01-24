@@ -241,13 +241,7 @@ Security Measures:
 - Confirm rate limiting of 3 bookings/hour per user as specified?
 - Other rate limits needed (profile updates, searches)?
 
-### Dashboard Monitoring Requirements
-
-**Q10: Dashboard Features**
-- What metrics should admins see: total mentors/mentees, active sessions, completion rates, popular expertise areas?
-- Should admins be able to approve/deny mentor applications?
-- Can admins create/cancel bookings on behalf of users?
-- Export capabilities for reporting?
+### Dashboard Monitoring Requirementswork
 - Real-time or daily batch statistics?
 
 **Q11: Admin Actions**

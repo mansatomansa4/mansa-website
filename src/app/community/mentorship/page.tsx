@@ -367,25 +367,36 @@ export default function MentorshipPage() {
             <div className="flex flex-col lg:flex-row gap-4 mb-10">
               {/* Search Bar */}
               <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" aria-hidden="true" />
                 <input
-                  type="text"
+                  type="search"
+                  id="mentor-search"
                   placeholder="Search by name, expertise, company..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label="Search mentors by name, expertise, or company"
+                  aria-describedby="search-instructions"
                   className="w-full pl-12 pr-6 py-4 bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:border-emerald-500 transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 font-medium shadow-sm"
                 />
+                <span id="search-instructions" className="sr-only">
+                  Type to search mentors. Results will update as you type.
+                </span>
               </div>
 
               {/* Expertise Filter */}
               <div className="relative min-w-[240px]">
-                <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
+                <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" aria-hidden="true" />
+                <label htmlFor="expertise-filter" className="sr-only">
+                  Filter mentors by expertise area
+                </label>
                 <select
+                  id="expertise-filter"
                   value={selectedExpertise}
                   onChange={(e) => {
                     setSelectedExpertise(e.target.value)
                     setPage(1)
                   }}
+                  aria-label="Filter mentors by expertise area"
                   className="w-full pl-12 pr-10 py-4 bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:focus:border-emerald-500 transition-all duration-200 appearance-none cursor-pointer text-gray-900 dark:text-white font-medium shadow-sm"
                 >
                   <option value="">All Expertise Areas</option>
