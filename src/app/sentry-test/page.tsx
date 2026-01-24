@@ -160,8 +160,8 @@ export default function SentryTestPage() {
               <li>Click any test button above</li>
               <li>Go to <a href="https://sentry.io" target="_blank" className="text-purple-600 hover:underline">sentry.io</a></li>
               <li>Login and navigate to Projects → mansa-mentorship</li>
-              <li>Check the "Issues" tab for captured errors</li>
-              <li>Check "Performance" tab for transactions</li>
+              <li>Check the &quot;Issues&quot; tab for captured errors</li>
+              <li>Check &quot;Performance&quot; tab for transactions</li>
             </ol>
 
             <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded">

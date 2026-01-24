@@ -68,7 +68,7 @@ export class ErrorBoundaryWithSentry extends Component<Props, State> {
             </h2>
 
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              We're sorry for the inconvenience. The error has been reported to our team.
+              We are sorry for the inconvenience. The error has been reported to our team.
             </p>
 
             {process.env.NODE_ENV === 'development' && this.state.error && (
