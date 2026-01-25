@@ -5,8 +5,8 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { 
-  Users, Star, Calendar, Search, Filter, 
+import {
+  Users, Star, Calendar, Search, Filter,
   Award, TrendingUp, Clock, CheckCircle,
   User, LogOut, BookOpen, Settings
 } from 'lucide-react'
@@ -14,54 +14,13 @@ import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import { CardSkeleton } from '@/components/ui/Skeleton'
 import { NoMentorsFound } from '@/components/ui/EmptyState'
+import { mentorshipApi } from '@/lib/mentorship-api'
+import { Mentor, ExpertiseCategory } from '@/types/mentorship'
 
 // Dynamically import ErrorBoundary to avoid SSR issues
 const ErrorBoundary = dynamic(() => import('@/components/ui/ErrorBoundary'), {
   ssr: false
 })
-
-interface Mentor {
-  id: string
-  member_id?: string
-  name?: string  // From member data
-  email?: string  // From member data
-  phone?: string
-  country?: string
-  city?: string
-  location?: string
-  linkedin?: string
-  experience?: string
-  areaofexpertise?: string
-  user?: {
-    first_name: string
-    last_name: string
-    email: string
-  }
-  bio: string
-  photo_url?: string
-  profile_picture?: string  // Alias for photo_url from member
-  expertise: Array<{
-    category: string
-    subcategories?: string[]
-  }> | string[]  // Can be array of strings or objects
-  rating: number
-  total_sessions: number
-  company?: string
-  job_title?: string
-  jobtitle?: string  // Alias from member
-  occupation?: string
-  years_of_experience?: number
-  is_approved: boolean
-  member_data?: any  // Full member data if needed
-}
-
-interface ExpertiseCategory {
-  id: string
-  name: string
-  description: string
-  icon?: string
-  color?: string
-}
 
 interface UserInfo {
   id: string
@@ -104,13 +63,13 @@ export default function MentorshipPage() {
     const isMentor = localStorage.getItem('is_mentor') === 'true'
     const isMentee = localStorage.getItem('is_mentee') === 'true'
     const userRole = localStorage.getItem('user_role') || 'user'
-    
+
     // Redirect to landing page if not authenticated
     if (!token || !userEmail) {
       router.push('/community/mentorship/landing')
       return
     }
-    
+
     // Set user info from localStorage if logged in
     const nameParts = userName?.split(' ') || ['', '']
     setUserInfo({
@@ -123,7 +82,7 @@ export default function MentorshipPage() {
       role: userRole
     })
     setIsAuthenticated(true)
-    
+
     // Load mentors after authentication check passes
     fetchMentors()
     fetchExpertiseCategories()
@@ -133,28 +92,19 @@ export default function MentorshipPage() {
   const fetchMentors = async () => {
     try {
       setLoading(true)
-      const params = new URLSearchParams({
-        page: page.toString(),
-        page_size: '12'
+      const response = await mentorshipApi.listMentors({
+        page,
+        expertise: selectedExpertise
       })
-      
-      if (selectedExpertise) {
-        params.append('expertise', selectedExpertise)
-      }
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/mentors/?${params}`
-      )
-      
-      if (!response.ok) {
-        console.error('Failed to fetch mentors:', response.status)
+      if (response.error) {
+        console.error('Failed to fetch mentors:', response.error)
         setMentors([])
         return
       }
-      
-      const data = await response.json()
-      setMentors(data.results || [])
-      setTotalCount(data.count || 0)
+
+      setMentors(response.data || [])
+      setTotalCount(response.count || 0)
     } catch (error) {
       console.error('Error fetching mentors:', error)
       setMentors([])
@@ -165,23 +115,17 @@ export default function MentorshipPage() {
 
   const fetchExpertiseCategories = async () => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/expertise/`
-      )
-      
-      if (!response.ok) {
-        console.error('Failed to fetch expertise categories:', response.status)
-        // If backend is still deploying, set empty array silently
+      const response = await mentorshipApi.getExpertiseCategories()
+
+      if (response.error) {
+        console.error('Failed to fetch expertise categories:', response.error)
         setExpertiseCategories([])
         return
       }
-      
-      const data = await response.json()
-      // Ensure data is an array
-      setExpertiseCategories(Array.isArray(data) ? data : [])
+
+      setExpertiseCategories(response.data || [])
     } catch (error) {
       console.error('Error fetching expertise categories:', error)
-      // Gracefully handle errors - set empty array
       setExpertiseCategories([])
     }
   }
@@ -194,22 +138,22 @@ export default function MentorshipPage() {
   const filteredMentors = mentors.filter(mentor => {
     if (!searchQuery) return true
     const query = searchQuery.toLowerCase()
-    
+
     // Support both new structure (with name/email at top level) and legacy (nested in user)
     const firstName = mentor.user?.first_name || mentor.name?.split(' ')[0] || ''
     const lastName = mentor.user?.last_name || mentor.name?.split(' ').slice(1).join(' ') || ''
     const jobTitle = mentor.job_title || mentor.jobtitle || mentor.occupation || ''
-    
+
     // Handle expertise as either array of strings or array of objects
-    const expertiseMatch = Array.isArray(mentor.expertise) 
+    const expertiseMatch = Array.isArray(mentor.expertise)
       ? mentor.expertise.some(exp => {
-          if (typeof exp === 'string') {
-            return exp.toLowerCase().includes(query)
-          }
-          return exp.category?.toLowerCase().includes(query)
-        })
+        if (typeof exp === 'string') {
+          return exp.toLowerCase().includes(query)
+        }
+        return exp.category?.toLowerCase().includes(query)
+      })
       : false
-    
+
     return (
       firstName.toLowerCase().includes(query) ||
       lastName.toLowerCase().includes(query) ||
@@ -437,7 +381,7 @@ export default function MentorshipPage() {
                         <div className="group relative bg-white dark:bg-gray-900 rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 border-2 border-gray-100 dark:border-gray-800 hover:border-emerald-500 dark:hover:border-emerald-500 cursor-pointer h-full overflow-hidden">
                           {/* Hover Gradient Background */}
                           <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/0 to-teal-50/0 dark:from-emerald-950/0 dark:to-teal-950/0 group-hover:from-emerald-50/50 group-hover:to-teal-50/50 dark:group-hover:from-emerald-950/20 dark:group-hover:to-teal-950/20 transition-all duration-300 rounded-2xl"></div>
-                          
+
                           <div className="relative z-10">
                             {/* Header with Photo */}
                             <div className="flex items-start gap-4 mb-5">
@@ -446,7 +390,7 @@ export default function MentorshipPage() {
                                   const photoUrl = mentor.photo_url || mentor.profile_picture
                                   const firstName = mentor.user?.first_name || mentor.name?.split(' ')[0] || ''
                                   const lastName = mentor.user?.last_name || mentor.name?.split(' ').slice(1).join(' ') || ''
-                                  
+
                                   return photoUrl ? (
                                     <>
                                       <img
@@ -500,13 +444,13 @@ export default function MentorshipPage() {
                             {/* Expertise Tags */}
                             <div className="flex flex-wrap gap-2 mb-5">
                               {(() => {
-                                const expertiseArray = Array.isArray(mentor.expertise) 
-                                  ? mentor.expertise 
-                                  : mentor.areaofexpertise 
+                                const expertiseArray = Array.isArray(mentor.expertise)
+                                  ? mentor.expertise
+                                  : mentor.areaofexpertise
                                     ? [mentor.areaofexpertise]
                                     : []
-                                
-                                return expertiseArray.slice(0, 3).map((exp, idx) => {
+
+                                return expertiseArray.slice(0, 3).map((exp: any, idx) => {
                                   const label = typeof exp === 'string' ? exp : exp.category
                                   return (
                                     <span

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { 
+import {
   Calendar, Clock, Users, Award, TrendingUp, CheckCircle,
   AlertCircle, XCircle, User, Settings, Edit3, Video,
   MessageSquare, Star, ArrowRight, Bell, LogOut, BookOpen
@@ -12,49 +12,17 @@ import {
 import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import { format, parseISO } from 'date-fns'
+import { mentorshipApi } from '@/lib/mentorship-api'
+import { Mentor, MentorStats, Booking } from '@/types/mentorship'
 
-interface MentorStats {
-  total_sessions: number
-  completed_sessions: number
-  upcoming_sessions: number
-  pending_requests: number
-  total_mentees: number
-  average_rating: number
-  total_reviews: number
-  response_rate: number
-}
-
-interface UpcomingSession {
-  id: string
-  mentee_name: string
-  mentee_photo_url?: string
-  scheduled_at: string
-  topic: string
-  status: string
-  meeting_link?: string
-}
-
-interface MentorProfile {
-  id: string
-  user: {
-    name: string
-    email: string
-  }
-  bio: string
-  expertise: Array<{ category: string }>
-  is_approved: boolean
-  is_accepting_requests: boolean
-  photo_url?: string
-  average_rating: number
-  total_reviews: number
-}
+// Local UI-specific types if needed, otherwise use imported ones
 
 export default function MentorDashboardPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [profile, setProfile] = useState<MentorProfile | null>(null)
+  const [profile, setProfile] = useState<Mentor | null>(null)
   const [stats, setStats] = useState<MentorStats | null>(null)
-  const [upcomingSessions, setUpcomingSessions] = useState<UpcomingSession[]>([])
+  const [upcomingSessions, setUpcomingSessions] = useState<Booking[]>([])
   const [error, setError] = useState<string>('')
 
   useEffect(() => {
@@ -69,79 +37,31 @@ export default function MentorDashboardPage() {
         return
       }
 
-      // Fetch mentor profile
-      const profileResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/mentors/me/`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
+      // Use the new dashboard endpoint for all data at once
+      const response = await mentorshipApi.getMentorDashboard()
 
-      if (profileResponse.status === 404) {
-        // Not a mentor yet, redirect to application
-        router.push('/community/mentorship/mentor/apply')
-        return
-      }
-
-      if (profileResponse.status === 401) {
-        router.push('/community/mentorship/auth?redirect=/community/mentorship/mentor')
-        return
-      }
-
-      if (!profileResponse.ok) {
-        throw new Error('Failed to fetch mentor profile')
-      }
-
-      const profileData = await profileResponse.json()
-      setProfile(profileData)
-
-      // Fetch stats - handle if endpoint doesn't exist yet
-      try {
-        const statsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/mentors/stats/`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        })
-
-        if (statsResponse.ok) {
-          const statsData = await statsResponse.json()
-          setStats(statsData)
-        } else {
-          // Set default stats if endpoint not available
-          setStats({
-            total_sessions: profileData.total_sessions || 0,
-            completed_sessions: 0,
-            upcoming_sessions: 0,
-            pending_requests: 0,
-            total_mentees: 0,
-            average_rating: profileData.rating || 0,
-            total_reviews: profileData.total_reviews || 0,
-            response_rate: 100
-          })
+      if (response.error) {
+        if (response.error.includes('404')) {
+          router.push('/community/mentorship/mentor/apply')
+          return
         }
-      } catch (statsErr) {
-        console.warn('Stats endpoint not available, using default values')
-        setStats({
-          total_sessions: profileData.total_sessions || 0,
-          completed_sessions: 0,
-          upcoming_sessions: 0,
-          pending_requests: 0,
-          total_mentees: 0,
-          average_rating: profileData.rating || 0,
-          total_reviews: profileData.total_reviews || 0,
-          response_rate: 100
-        })
-      }
-
-      // Fetch upcoming sessions - handle if endpoint doesn't exist yet
-      try {
-        const sessionsResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/bookings/?role=mentor&status=confirmed&limit=5`,
-          { headers: { 'Authorization': `Bearer ${token}` } }
-        )
-
-        if (sessionsResponse.ok) {
-          const sessionsData = await sessionsResponse.json()
-          setUpcomingSessions(sessionsData.results || sessionsData || [])
+        if (response.error.includes('401')) {
+          router.push('/community/mentorship/auth?redirect=/community/mentorship/mentor')
+          return
         }
-      } catch (sessionsErr) {
-        console.warn('Bookings endpoint not available')
+        throw new Error(response.error)
       }
+
+      const { stats, upcoming_sessions } = response.data || {}
+
+      // We still need the detailed profile for some UI parts
+      const profileResponse = await mentorshipApi.getMentor('me')
+      if (profileResponse.data) {
+        setProfile(profileResponse.data)
+      }
+
+      if (stats) setStats(stats)
+      if (upcoming_sessions) setUpcomingSessions(upcoming_sessions)
 
     } catch (err: any) {
       setError(err.message || 'Failed to load dashboard')
@@ -187,7 +107,7 @@ export default function MentorDashboardPage() {
   if (!profile.is_approved) {
     return (
       <div className="relative flex flex-col min-h-screen bg-slate-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900">
-        
+
         {/* Professional Header Bar */}
         <div className="fixed top-0 right-0 left-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
           <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4">
@@ -222,7 +142,7 @@ export default function MentorDashboardPage() {
             </div>
           </div>
         </div>
-        
+
         {/* Profile Summary Bar */}
         <div className="fixed top-[73px] right-0 left-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
@@ -232,19 +152,19 @@ export default function MentorDashboardPage() {
                   {profile.photo_url ? (
                     <img
                       src={profile.photo_url}
-                      alt={profile.user.name}
+                      alt={profile.user?.first_name || 'Mentor'}
                       className="w-10 h-10 rounded-full object-cover border-2 border-amber-500"
                     />
                   ) : (
                     <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold">
-                      {profile.user.name.split(' ').map((n: string) => n[0]).join('')}
+                      {profile.user?.first_name?.[0] || 'M'}{profile.user?.last_name?.[0] || 'M'}
                     </div>
                   )}
                   <div>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      {profile.user.name}
+                      {profile.user?.first_name} {profile.user?.last_name}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{profile.user.email}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{profile.user?.email}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -305,7 +225,7 @@ export default function MentorDashboardPage() {
 
   return (
     <div className="relative flex flex-col min-h-screen bg-slate-50 dark:bg-gray-950">
-      
+
       {/* Professional Header Bar */}
       <div className="fixed top-0 right-0 left-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4">
@@ -336,13 +256,13 @@ export default function MentorDashboardPage() {
 
       <main className="relative pb-16" style={{ paddingTop: '90px' }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          
+
           {/* Professional Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-                  Welcome back, {profile.user?.name ? profile.user.name.split(' ')[0] : localStorage.getItem('user_name')?.split(' ')[0] || 'Mentor'}
+                  Welcome back, {profile.user?.first_name || profile.name?.split(' ')[0] || localStorage.getItem('user_name')?.split(' ')[0] || 'Mentor'}
                 </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Here&apos;s what&apos;s happening with your mentorship sessions
@@ -408,17 +328,15 @@ export default function MentorDashboardPage() {
                   // Toggle accepting requests
                   alert('Toggle accepting requests functionality coming soon')
                 }}
-                className={`flex items-center gap-3 p-4 border rounded-xl transition-all group text-left ${
-                  profile.is_accepting_requests
-                    ? 'bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800 hover:border-green-300 dark:hover:border-green-700'
-                    : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                }`}
+                className={`flex items-center gap-3 p-4 border rounded-xl transition-all group text-left ${profile.is_accepting_requests
+                  ? 'bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-800 hover:border-green-300 dark:hover:border-green-700'
+                  : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
               >
-                <div className={`p-2.5 rounded-lg ${
-                  profile.is_accepting_requests
-                    ? 'bg-green-100 dark:bg-green-900/20'
-                    : 'bg-gray-200 dark:bg-gray-700'
-                }`}>
+                <div className={`p-2.5 rounded-lg ${profile.is_accepting_requests
+                  ? 'bg-green-100 dark:bg-green-900/20'
+                  : 'bg-gray-200 dark:bg-gray-700'
+                  }`}>
                   {profile.is_accepting_requests ? (
                     <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
                   ) : (
@@ -562,7 +480,7 @@ export default function MentorDashboardPage() {
                             {session.topic}
                           </p>
                           <p className="text-sm text-emerald-600 dark:text-emerald-400 mt-1">
-                            {format(parseISO(session.scheduled_at), 'MMM d, yyyy • h:mm a')}
+                            {format(parseISO(session.scheduled_at || session.session_date), 'MMM d, yyyy • h:mm a')}
                           </p>
                         </div>
                         {session.meeting_link && (
@@ -616,7 +534,7 @@ export default function MentorDashboardPage() {
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Completion Rate</span>
                         <span className="text-sm font-bold text-gray-900 dark:text-white">
-                          {stats.total_sessions > 0 
+                          {stats.total_sessions > 0
                             ? Math.round((stats.completed_sessions / stats.total_sessions) * 100)
                             : 0}%
                         </span>
@@ -624,10 +542,10 @@ export default function MentorDashboardPage() {
                       <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2.5">
                         <div
                           className="bg-gradient-to-r from-blue-500 to-blue-600 h-2.5 rounded-full transition-all"
-                          style={{ 
-                            width: `${stats.total_sessions > 0 
+                          style={{
+                            width: `${stats.total_sessions > 0
                               ? Math.round((stats.completed_sessions / stats.total_sessions) * 100)
-                              : 0}%` 
+                              : 0}%`
                           }}
                         />
                       </div>

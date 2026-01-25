@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { 
+import {
   ArrowLeft, Plus, Trash2, Save, Clock, Calendar,
   AlertCircle, Check, X, Loader
 } from 'lucide-react'
@@ -11,18 +11,12 @@ import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import { format, addDays, startOfWeek, parseISO } from 'date-fns'
 
-interface TimeSlot {
-  id?: string
-  day_of_week?: number
-  start_time: string
-  end_time: string
-  specific_date?: string
-  is_recurring: boolean
-}
+import { mentorshipApi } from '@/lib/mentorship-api'
+import { AvailabilitySlot } from '@/types/mentorship'
 
-interface AvailabilityData {
-  recurring_slots: TimeSlot[]
-  specific_date_slots: TimeSlot[]
+// Local UI-specific types if needed
+interface TimeSlot extends Partial<AvailabilitySlot> {
+  specific_date?: string
 }
 
 const DAYS_OF_WEEK = [
@@ -61,26 +55,20 @@ export default function AvailabilityManagementPage() {
 
   const fetchAvailability = async () => {
     try {
-      const token = localStorage.getItem('access_token')
-      if (!token) {
-        router.push('/login?redirect=/community/mentorship/mentor/availability')
-        return
+      const response = await mentorshipApi.getAvailability()
+
+      if (response.error) {
+        if (response.error.includes('401')) {
+          router.push('/login?redirect=/community/mentorship/mentor/availability')
+          return
+        }
+        throw new Error(response.error)
       }
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/availability/me/`,
-        { headers: { 'Authorization': `Bearer ${token}` } }
-      )
-
-      if (response.status === 401) {
-        router.push('/login?redirect=/community/mentorship/mentor/availability')
-        return
-      }
-
-      if (response.ok) {
-        const data: AvailabilityData = await response.json()
-        setRecurringSlots(data.recurring_slots || [])
-        setSpecificDateSlots(data.specific_date_slots || [])
+      if (response.data) {
+        const slots = response.data
+        setRecurringSlots(slots.filter(s => s.is_recurring))
+        setSpecificDateSlots(slots.filter(s => !s.is_recurring))
       }
     } catch (err: any) {
       console.error('Failed to fetch availability:', err)
@@ -116,7 +104,7 @@ export default function AvailabilityManagementPage() {
 
   const removeRecurringSlot = async (index: number) => {
     const slot = recurringSlots[index]
-    
+
     if (slot.id) {
       // Delete from server
       try {
@@ -132,13 +120,13 @@ export default function AvailabilityManagementPage() {
         console.error('Failed to delete slot:', err)
       }
     }
-    
+
     setRecurringSlots(recurringSlots.filter((_, i) => i !== index))
   }
 
   const removeSpecificDateSlot = async (index: number) => {
     const slot = specificDateSlots[index]
-    
+
     if (slot.id) {
       try {
         const token = localStorage.getItem('access_token')
@@ -153,7 +141,7 @@ export default function AvailabilityManagementPage() {
         console.error('Failed to delete slot:', err)
       }
     }
-    
+
     setSpecificDateSlots(specificDateSlots.filter((_, i) => i !== index))
   }
 
@@ -174,14 +162,18 @@ export default function AvailabilityManagementPage() {
 
     // Validate recurring slots
     recurringSlots.forEach((slot, index) => {
-      if (slot.start_time >= slot.end_time) {
+      const start = slot.start_time || '00:00'
+      const end = slot.end_time || '00:00'
+      if (start >= end) {
         newErrors[`recurring_${index}`] = 'End time must be after start time'
       }
     })
 
     // Validate specific date slots
     specificDateSlots.forEach((slot, index) => {
-      if (slot.start_time >= slot.end_time) {
+      const start = slot.start_time || '00:00'
+      const end = slot.end_time || '00:00'
+      if (start >= end) {
         newErrors[`specific_${index}`] = 'End time must be after start time'
       }
       if (slot.specific_date && new Date(slot.specific_date) < new Date()) {
@@ -201,85 +193,11 @@ export default function AvailabilityManagementPage() {
 
     setSaving(true)
     try {
-      const token = localStorage.getItem('access_token')
-      if (!token) {
-        router.push('/login')
-        return
-      }
+      // Save all slots in bulk using the new endpoint
+      const allSlots = [...recurringSlots, ...specificDateSlots]
+      const response = await mentorshipApi.bulkCreateAvailability(allSlots)
 
-      // Save recurring slots
-      for (const slot of recurringSlots) {
-        const payload = {
-          day_of_week: slot.day_of_week,
-          start_time: slot.start_time,
-          end_time: slot.end_time,
-          is_recurring: true
-        }
-
-        if (slot.id) {
-          // Update existing
-          await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/availability/${slot.id}/`,
-            {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify(payload)
-            }
-          )
-        } else {
-          // Create new
-          await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/availability/`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify(payload)
-            }
-          )
-        }
-      }
-
-      // Save specific date slots
-      for (const slot of specificDateSlots) {
-        const payload = {
-          specific_date: slot.specific_date,
-          start_time: slot.start_time,
-          end_time: slot.end_time,
-          is_recurring: false
-        }
-
-        if (slot.id) {
-          await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/availability/${slot.id}/`,
-            {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify(payload)
-            }
-          )
-        } else {
-          await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/mentorship/availability/`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify(payload)
-            }
-          )
-        }
-      }
+      if (response.error) throw new Error(response.error)
 
       alert('Availability saved successfully!')
       await fetchAvailability() // Refresh data
@@ -349,11 +267,10 @@ export default function AvailabilityManagementPage() {
           <div className="flex gap-4 mb-6 border-b border-gray-200 dark:border-gray-700">
             <button
               onClick={() => setActiveTab('recurring')}
-              className={`pb-3 px-1 font-medium transition-colors relative ${
-                activeTab === 'recurring'
-                  ? 'text-emerald-600 dark:text-emerald-400'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-              }`}
+              className={`pb-3 px-1 font-medium transition-colors relative ${activeTab === 'recurring'
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`}
             >
               Weekly Schedule
               {activeTab === 'recurring' && (
@@ -365,11 +282,10 @@ export default function AvailabilityManagementPage() {
             </button>
             <button
               onClick={() => setActiveTab('specific')}
-              className={`pb-3 px-1 font-medium transition-colors relative ${
-                activeTab === 'specific'
-                  ? 'text-emerald-600 dark:text-emerald-400'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-              }`}
+              className={`pb-3 px-1 font-medium transition-colors relative ${activeTab === 'specific'
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`}
             >
               Specific Dates
               {activeTab === 'specific' && (
