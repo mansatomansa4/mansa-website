@@ -38,16 +38,17 @@ export default function SentryTestPage() {
   }
 
   const testPerformance = () => {
-    const transaction = Sentry.startTransaction({
-      name: 'Test Transaction',
-      op: 'test'
-    })
-
-    // Simulate some work
-    setTimeout(() => {
-      transaction.finish()
-      setLastTest('Performance metric captured!')
-    }, 1000)
+    Sentry.startSpan(
+      {
+        name: 'Test Transaction',
+        op: 'test',
+      },
+      async () => {
+        // Simulate some work
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        setLastTest('Performance metric captured!')
+      }
+    )
   }
 
   return (

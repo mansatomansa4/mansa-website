@@ -470,7 +470,7 @@ export default function MentorshipLandingPage() {
                   ))}
                 </div>
                 <p className="text-gray-600 dark:text-gray-300 mb-6 italic">
-                  "{testimonial.quote}"
+                  &ldquo;{testimonial.quote}&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold">

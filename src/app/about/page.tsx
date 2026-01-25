@@ -36,25 +36,25 @@ export default function AboutPage() {
       icon: Users,
       title: 'Professional Mentorship',
       description: 'Connect with experienced industry professionals who provide guidance on career navigation, skill development, and industry insights.',
-      gradient: 'from-blue-500 to-cyan-500'
+      gradient: 'from-blue-600 to-blue-500'
     },
     {
       icon: Network,
       title: 'Strategic Networking',
       description: 'Build lasting professional relationships with peers and industry leaders across the global African diaspora.',
-      gradient: 'from-purple-500 to-pink-500'
+      gradient: 'from-blue-500 to-blue-400'
     },
     {
       icon: Briefcase,
       title: 'Portfolio Projects',
       description: 'Work on collaborative projects that strengthen your portfolio and develop crucial professional skills.',
-      gradient: 'from-emerald-500 to-teal-500'
+      gradient: 'from-blue-600 to-blue-400'
     },
     {
       icon: Globe,
       title: 'Global Community',
       description: 'Connect with like-minded professionals from every corner of the world for cross-cultural collaboration.',
-      gradient: 'from-amber-500 to-orange-500'
+      gradient: 'from-blue-500 to-blue-600'
     }
   ]
 
@@ -106,16 +106,16 @@ export default function AboutPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-gray-950 dark:via-gray-900 dark:to-blue-950/30"></div>
           
           {/* Animated Gradient Orbs */}
-          <motion.div 
-            className="absolute top-20 right-[15%] w-[600px] h-[600px] bg-gradient-to-br from-blue-200/30 to-purple-300/20 dark:from-blue-500/10 dark:to-purple-500/10 rounded-full blur-3xl"
+          <motion.div
+            className="absolute top-20 right-[15%] w-[600px] h-[600px] bg-gradient-to-br from-blue-200/30 to-blue-300/20 dark:from-blue-500/10 dark:to-blue-400/10 rounded-full blur-3xl"
             animate={{ 
               scale: [1, 1.15, 1],
               opacity: [0.4, 0.6, 0.4]
             }}
             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           />
-          <motion.div 
-            className="absolute bottom-10 left-[5%] w-[500px] h-[500px] bg-gradient-to-tr from-emerald-200/25 to-blue-200/25 dark:from-emerald-500/10 dark:to-blue-500/10 rounded-full blur-3xl"
+          <motion.div
+            className="absolute bottom-10 left-[5%] w-[500px] h-[500px] bg-gradient-to-tr from-blue-200/25 to-blue-100/25 dark:from-blue-500/10 dark:to-blue-400/10 rounded-full blur-3xl"
             animate={{ 
               scale: [1.1, 1, 1.1],
               opacity: [0.3, 0.5, 0.3]
@@ -136,7 +136,7 @@ export default function AboutPage() {
           >
             {/* Badge */}
             <motion.div variants={itemVariants} className="mb-8">
-              <span className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/40 dark:to-purple-900/40 border border-blue-200/50 dark:border-blue-700/50 shadow-sm backdrop-blur-sm">
+              <span className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-blue-100 dark:bg-blue-900/40 border border-blue-200/50 dark:border-blue-700/50 shadow-sm backdrop-blur-sm">
                 <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 <span className="text-sm font-semibold text-blue-700 dark:text-blue-300 tracking-wide">
                   About Mansa-to-Mansa
@@ -150,7 +150,7 @@ export default function AboutPage() {
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-8 leading-[1.1]"
             >
               Empowering Success
-              <span className="block mt-3 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <span className="block mt-3 text-blue-600 dark:text-blue-400">
                 Through Global Connection
               </span>
             </motion.h1>
@@ -179,10 +179,10 @@ export default function AboutPage() {
                   transition={{ delay: 0.6 + index * 0.1 }}
                   className="group relative bg-white/70 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 hover:shadow-lg"
                 >
-                  <div className="w-10 h-10 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/50 dark:to-purple-900/50 flex items-center justify-center">
+                  <div className="w-10 h-10 mx-auto mb-3 rounded-xl bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
                     <stat.icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <div className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">
+                  <div className="text-3xl sm:text-4xl font-bold text-blue-600 dark:text-blue-400 mb-1">
                     {stat.value}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400 font-medium">
@@ -220,7 +220,7 @@ export default function AboutPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-sm font-semibold mb-6">
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-sm font-semibold mb-6">
                 <Target className="w-4 h-4" />
                 Our Purpose
               </span>
@@ -258,7 +258,7 @@ export default function AboutPage() {
                     whileHover={{ y: -5 }}
                     className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
                   >
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/50 dark:to-purple-900/50 flex items-center justify-center mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center mb-4">
                       <value.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
@@ -284,13 +284,13 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-sm font-semibold mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-sm font-semibold mb-6">
               <Zap className="w-4 h-4" />
               What We Do
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
               Our Four
-              <span className="text-emerald-600 dark:text-emerald-400"> Pillars</span>
+              <span className="text-blue-600 dark:text-blue-400"> Pillars</span>
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               We create pathways to success through impactful collaborations, meaningful connections, 
@@ -329,7 +329,7 @@ export default function AboutPage() {
       </section>
 
       {/* Vision Section */}
-      <section className="py-24 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 dark:from-blue-900 dark:via-purple-900 dark:to-blue-900 relative overflow-hidden">
+      <section className="py-24 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 dark:from-blue-900 dark:via-blue-950 dark:to-gray-900 relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
@@ -341,8 +341,8 @@ export default function AboutPage() {
           animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
           transition={{ duration: 8, repeat: Infinity }}
         />
-        <motion.div 
-          className="absolute bottom-20 left-20 w-80 h-80 bg-purple-400/10 rounded-full blur-3xl"
+        <motion.div
+          className="absolute bottom-20 left-20 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl"
           animate={{ scale: [1.2, 1, 1.2], opacity: [0.15, 0.25, 0.15] }}
           transition={{ duration: 10, repeat: Infinity }}
         />
@@ -363,12 +363,12 @@ export default function AboutPage() {
                 <span className="block">Everywhere</span>
               </h2>
               <p className="text-xl text-blue-100 leading-relaxed mb-8">
-                We're building toward an ambitious future where Mansas — our network of students, 
+                We&apos;re building toward an ambitious future where Mansas — our network of students, 
                 professionals, and mentors — are present in every major institution, industry, 
                 and city around the globe.
               </p>
               <p className="text-lg text-blue-200">
-                This isn't just networking — it's a global ecosystem of opportunity, support, 
+                This isn&apos;t just networking — it&apos;s a global ecosystem of opportunity, support, 
                 and mutual growth that transcends geographical boundaries.
               </p>
             </motion.div>
@@ -410,16 +410,16 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-sm font-semibold mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-sm font-semibold mb-6">
               <TrendingUp className="w-4 h-4" />
               Our Impact
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
               Creating
-              <span className="text-purple-600 dark:text-purple-400"> Real Change</span>
+              <span className="text-blue-600 dark:text-blue-400"> Real Change</span>
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              We're intentionally working to increase African representation by ensuring our students 
+              We&apos;re intentionally working to increase African representation by ensuring our students 
               and professionals have the mentorship, networks, and collaborative opportunities that 
               have historically been less accessible.
             </p>
@@ -433,7 +433,7 @@ export default function AboutPage() {
           >
             <div className="grid md:grid-cols-3 gap-8 text-center">
               <div className="p-6">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-blue-600 flex items-center justify-center">
                   <GraduationCap className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">For Students</h3>
@@ -442,7 +442,7 @@ export default function AboutPage() {
                 </p>
               </div>
               <div className="p-6">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-blue-500 flex items-center justify-center">
                   <Briefcase className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">For Professionals</h3>
@@ -451,7 +451,7 @@ export default function AboutPage() {
                 </p>
               </div>
               <div className="p-6">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-blue-700 flex items-center justify-center">
                   <Building className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">For Industry</h3>
@@ -472,7 +472,7 @@ export default function AboutPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="w-20 h-20 mx-auto mb-8 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
+            <div className="w-20 h-20 mx-auto mb-8 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
               <Award className="w-10 h-10 text-white" />
             </div>
             
@@ -482,12 +482,12 @@ export default function AboutPage() {
             </h2>
             
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-6 max-w-2xl mx-auto">
-              Whether you're seeking mentorship, looking to expand your network, or ready to 
+              Whether you&apos;re seeking mentorship, looking to expand your network, or ready to 
               collaborate on meaningful projects — Mansa-to-Mansa is your gateway to success.
             </p>
             
             <p className="text-xl font-semibold text-gray-900 dark:text-white mb-10">
-              Your future starts with your next connection. Let's build it together, Mansa to Mansa.
+              Your future starts with your next connection. Let&apos;s build it together, Mansa to Mansa.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -495,7 +495,7 @@ export default function AboutPage() {
                 <motion.button
                   whileHover={{ scale: 1.02, boxShadow: "0 25px 50px -12px rgba(59, 130, 246, 0.35)" }}
                   whileTap={{ scale: 0.98 }}
-                  className="group px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-lg font-bold rounded-2xl shadow-xl shadow-blue-500/25 transition-all duration-300 flex items-center gap-3"
+                  className="group px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white text-lg font-bold rounded-2xl shadow-xl shadow-blue-500/25 transition-all duration-300 flex items-center gap-3"
                 >
                   <span>Join Our Community</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -530,7 +530,7 @@ export default function AboutPage() {
         <motion.div
           animate={{ scale: [1, 1.3, 1], opacity: [0.15, 0.3, 0.15] }}
           transition={{ duration: 10, repeat: Infinity, delay: 1 }}
-          className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"
+          className="absolute bottom-0 left-0 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl"
         />
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -545,7 +545,7 @@ export default function AboutPage() {
             </span>
             
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+              <span className="text-blue-400">
                 Contact Us
               </span>
             </h2>
@@ -558,7 +558,7 @@ export default function AboutPage() {
               href="mailto:mansatomansa@gmail.com"
               whileHover={{ scale: 1.05, y: -3 }}
               whileTap={{ scale: 0.98 }}
-              className="group inline-flex items-center gap-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-300"
+              className="group inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-300"
             >
               <Mail className="w-5 h-5" />
               <span>mansatomansa@gmail.com</span>
