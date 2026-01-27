@@ -8,19 +8,25 @@ import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import { getApiBaseUrl } from '@/lib/api'
 
+import { toast } from 'sonner'
+
 function AuthForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect') || '/community/mentorship'
-  
+
+  const [view, setView] = useState<'login' | 'change_password'>('login')
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
+
+  // Temporary storage for tokens during password change flow
+  const [tempAuth, setTempAuth] = useState<{ access: string, refresh: string } | null>(null)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
     setLoading(true)
 
     try {
@@ -30,7 +36,10 @@ function AuthForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: email.toLowerCase().trim() })
+        body: JSON.stringify({
+          email: email.toLowerCase().trim(),
+          password: password
+        })
       })
 
       const data = await response.json()
@@ -39,117 +48,167 @@ function AuthForm() {
         throw new Error(data.error || data.detail || 'Login failed')
       }
 
-      // Store authentication data
-      localStorage.setItem('access_token', data.access)
-      localStorage.setItem('refresh_token', data.refresh)
-      localStorage.setItem('user_id', data.user.id)
-      localStorage.setItem('user_email', data.user.email)
-      localStorage.setItem('user_role', data.user.role)
-      localStorage.setItem('is_mentor', data.user.is_mentor)
-      localStorage.setItem('is_mentee', data.user.is_mentee)
-      localStorage.setItem('user_name', `${data.user.first_name} ${data.user.last_name}`)
+      // Check if password change is required
+      if (data.user.must_change_password) {
+        setTempAuth({ access: data.access, refresh: data.refresh })
+        setView('change_password')
+        toast.info('Please change your password to continue')
+        setLoading(false)
+        return
+      }
 
-      setSuccess(true)
-
-      // Redirect based on user role with feedback
-      setTimeout(() => {
-        if (data.user.is_mentor && !data.user.is_mentee) {
-          // Pure mentor -> go to mentor dashboard
-          console.log('✓ Logged in as Mentor - Redirecting to mentor dashboard')
-          router.push('/community/mentorship/mentor')
-        } else if (data.user.is_mentee && !data.user.is_mentor) {
-          // Pure mentee -> go to browse mentors
-          console.log('✓ Logged in as Mentee - Redirecting to mentorship platform')
-          router.push(redirect)
-        } else if (data.user.is_mentor && data.user.is_mentee) {
-          // Both roles -> let them choose or go to mentorship hub
-          console.log('✓ Logged in as Mentor & Mentee - Redirecting to mentorship hub')
-          router.push('/community/mentorship')
-        } else {
-          // Neither role -> allow them to explore or apply as mentor
-          console.log('✓ Logged in - Explore mentorship opportunities')
-          router.push('/community/mentorship')
-        }
-      }, 1500)
+      await completeLogin(data)
 
     } catch (err: any) {
       console.error('Login error:', err)
-      // Provide more helpful error messages based on error type
       if (err.message.includes('Email not found')) {
-        setError('This email is not registered in our database. Please check your email or contact the admin team to get registered.')
+        toast.error('This email is not registered. Please contact support.')
       } else if (err.message.includes('network') || err.message.includes('Failed to fetch')) {
-        setError('Network error. Please check your internet connection and try again.')
+        toast.error('Network error. Please check your connection.')
       } else {
-        setError(err.message || 'Failed to login. Please check your email and try again.')
+        toast.error(err.message || 'Invalid credentials')
       }
-    } finally {
+      setLoading(false)
+    }
+  }
+
+  const completeLogin = async (data: any) => {
+    // Store authentication data
+    localStorage.setItem('access_token', data.access)
+    localStorage.setItem('refresh_token', data.refresh)
+    localStorage.setItem('user_id', data.user.id)
+    localStorage.setItem('user_email', data.user.email)
+    localStorage.setItem('user_role', data.user.role)
+    localStorage.setItem('is_mentor', String(data.user.is_mentor))
+    localStorage.setItem('is_mentee', String(data.user.is_mentee))
+    localStorage.setItem('user_name', `${data.user.first_name} ${data.user.last_name}`)
+
+    toast.success('Login successful!')
+
+    // Redirect based on user role
+    setTimeout(() => {
+      if (data.user.is_mentor && !data.user.is_mentee) {
+        router.push('/community/mentorship/mentor')
+      } else if (data.user.is_mentee && !data.user.is_mentor) {
+        router.push(redirect)
+      } else if (data.user.is_mentor && data.user.is_mentee) {
+        router.push('/community/mentorship')
+      } else {
+        router.push('/community/mentorship')
+      }
+    }, 1000)
+  }
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (newPassword !== confirmPassword) {
+      toast.error('Passwords do not match')
+      return
+    }
+
+    if (newPassword.length < 8) {
+      toast.error('Password must be at least 8 characters')
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      const apiUrl = getApiBaseUrl()
+      // Note: The backend endpoint might differ, usually it requires authentication.
+      // Since we have the temp token from login, we use it here.
+      const response = await fetch(`${apiUrl}/api/users/change-password/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${tempAuth?.access}`
+        },
+        body: JSON.stringify({
+          current_password: password,
+          new_password: newPassword
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Failed to change password')
+      }
+
+      toast.success('Password changed successfully!')
+
+      // The backend returns new tokens after password change
+      // Use the existing user data from the first login response if possible, 
+      // but we need to fetch user details or just assume the user object is the same.
+      // Ideally the change-password endpoint returns user data too, or just tokens.
+      // If it returns just tokens, we might need to rely on the initial login data's user info
+      // OR fetch the profile.
+      // For now let's retry the login with new password logic OR just decode the token?
+      // Actually, let's just use the tokens returned (if any) or existing ones + update local storage.
+
+      // Based on previous logs: "access": "...", "detail": "Password changed successfully"
+      // It returns new access token.
+
+      // We need the user object to call completeLogin. 
+      // Let's refetch profile or just use the data we had (we didn't save the full user obj from first login in state, oops).
+      // Let's just re-login automatically with the new password.
+
+      await handleReLogin(newPassword)
+
+    } catch (err: any) {
+      console.error('Password change error:', err)
+      toast.error(err.message || 'Failed to change password')
+      setLoading(false)
+    }
+  }
+
+  const handleReLogin = async (newPass: string) => {
+    try {
+      const apiUrl = getApiBaseUrl()
+      const response = await fetch(`${apiUrl}/api/users/email-login/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.toLowerCase().trim(), password: newPass })
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.detail)
+      await completeLogin(data)
+    } catch (err) {
+      toast.error('Session expired. Please login again with your new password.')
+      setView('login')
+      setPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
       setLoading(false)
     }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#004D43] via-[#003832] to-[#002922] pt-24 pb-16">
-        <div className="max-w-md mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl shadow-2xl p-8"
-          >
-            {/* Header */}
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#00D395] rounded-full mb-4">
-                <Mail className="w-8 h-8 text-white" />
-              </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Welcome to MentorHub
-              </h1>
-              <p className="text-gray-600">
-                Enter your email to access the mentorship platform
-              </p>
+      <div className="max-w-md mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl shadow-2xl p-8"
+        >
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-[#00D395] rounded-full mb-4">
+              <Mail className="w-8 h-8 text-white" />
             </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {view === 'change_password' ? 'Change Password' : 'Welcome Back'}
+            </h1>
+            <p className="text-gray-600">
+              {view === 'change_password'
+                ? 'Please set a new password to secure your account'
+                : 'Enter your credentials to access the platform'}
+            </p>
+          </div>
 
-            {/* Success Message */}
-            {success && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg"
-              >
-                <div className="flex items-start gap-3 mb-2">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-green-900">Login successful!</p>
-                    <p className="text-xs text-green-700 mt-1">
-                      {localStorage.getItem('is_mentor') === 'true' && localStorage.getItem('is_mentee') === 'true' 
-                        ? '✓ You have both Mentor and Mentee access'
-                        : localStorage.getItem('is_mentor') === 'true'
-                        ? '✓ Logged in as Mentor'
-                        : localStorage.getItem('is_mentee') === 'true'
-                        ? '✓ Logged in as Mentee'
-                        : '✓ Welcome to MentorHub'}
-                    </p>
-                  </div>
-                </div>
-                <p className="text-xs text-green-600 pl-8">Redirecting to your dashboard...</p>
-              </motion.div>
-            )}
-
-            {/* Error Message */}
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3"
-              >
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-red-900">Login Failed</p>
-                  <p className="text-sm text-red-700">{error}</p>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Login Form */}
+          {/* Forms */}
+          {view === 'login' ? (
             <form onSubmit={handleLogin} className="space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -164,67 +223,110 @@ function AuthForm() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your.email@example.com"
                     required
-                    disabled={loading || success}
-                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00D395] focus:border-transparent disabled:bg-gray-50 disabled:cursor-not-allowed transition-all"
+                    disabled={loading}
+                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00D395] focus:border-transparent disabled:bg-gray-50 transition-all text-gray-800"
                   />
                 </div>
-                <p className="mt-2 text-xs text-gray-500">
-                  Use the email registered with Mansa to Mansa community
-                </p>
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  disabled={loading}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00D395] focus:border-transparent disabled:bg-gray-50 transition-all text-gray-800"
+                />
               </div>
 
               <button
                 type="submit"
-                disabled={loading || success || !email.trim()}
-                className="w-full bg-[#00D395] hover:bg-[#00BF85] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                disabled={loading || !email.trim() || !password}
+                className="w-full bg-[#00D395] hover:bg-[#00BF85] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg"
               >
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Verifying...
-                  </>
-                ) : success ? (
-                  <>
-                    <CheckCircle className="w-5 h-5" />
-                    Success!
+                    Signing in...
                   </>
                 ) : (
                   <>
-                    Continue
+                    Sign In
                     <ArrowRight className="w-5 h-5" />
                   </>
                 )}
               </button>
             </form>
+          ) : (
+            <form onSubmit={handleChangePassword} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  disabled={loading}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00D395] focus:border-transparent disabled:bg-gray-50 transition-all text-gray-800"
+                />
+              </div>
 
-            {/* Additional Info */}
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">How it works:</h3>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-[#00D395] font-bold">1.</span>
-                  <span>Enter your registered email address</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#00D395] font-bold">2.</span>
-                  <span>System verifies your membership in our database</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#00D395] font-bold">3.</span>
-                  <span>You&apos;re redirected to your personalized dashboard</span>
-                </li>
-              </ul>
-            </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  disabled={loading}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00D395] focus:border-transparent disabled:bg-gray-50 transition-all text-gray-800"
+                />
+              </div>
 
-            {/* Footer Note */}
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-              <p className="text-xs text-blue-900">
-                <strong>Note:</strong> Only members registered in the Mansa to Mansa database can access the mentorship platform.
-                If you&apos;re not yet a member, please contact the admin team.
-              </p>
-            </div>
-          </motion.div>
-        </div>
+              <div className="text-xs text-gray-500">
+                Password must be at least 8 characters long.
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading || !newPassword || !confirmPassword}
+                className="w-full bg-[#00D395] hover:bg-[#00BF85] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    Change Password
+                    <CheckCircle className="w-5 h-5" />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
+
+          {/* Footer Note */}
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <p className="text-xs text-center text-gray-500">
+              Protected by Mansa-to-Mansa Security
+            </p>
+          </div>
+        </motion.div>
+      </div>
     </div>
   )
 }

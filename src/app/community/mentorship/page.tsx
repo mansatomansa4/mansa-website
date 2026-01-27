@@ -135,6 +135,32 @@ export default function MentorshipPage() {
     fetchExpertiseCategories()
   }, [page, selectedExpertise])
 
+  // Helper function to safely get expertise as array
+  const getExpertiseArray = (mentor: Mentor): string[] => {
+    if (!mentor.expertise) return []
+
+    // If it's already an array
+    if (Array.isArray(mentor.expertise)) {
+      return mentor.expertise.map(exp => {
+        if (typeof exp === 'string') return exp
+        if (typeof exp === 'object' && exp.category) return exp.category
+        return ''
+      }).filter(Boolean)
+    }
+
+    // If it's a string, return as single-item array
+    if (typeof mentor.expertise === 'string') {
+      return [mentor.expertise]
+    }
+
+    // Fallback to areaofexpertise if available
+    if (mentor.areaofexpertise) {
+      return [mentor.areaofexpertise]
+    }
+
+    return []
+  }
+
   const filteredMentors = mentors.filter(mentor => {
     if (!searchQuery) return true
     const query = searchQuery.toLowerCase()
@@ -144,15 +170,9 @@ export default function MentorshipPage() {
     const lastName = mentor.user?.last_name || mentor.name?.split(' ').slice(1).join(' ') || ''
     const jobTitle = mentor.job_title || mentor.jobtitle || mentor.occupation || ''
 
-    // Handle expertise as either array of strings or array of objects
-    const expertiseMatch = Array.isArray(mentor.expertise)
-      ? mentor.expertise.some(exp => {
-        if (typeof exp === 'string') {
-          return exp.toLowerCase().includes(query)
-        }
-        return exp.category?.toLowerCase().includes(query)
-      })
-      : false
+    // Use helper function to get expertise array
+    const expertiseArray = getExpertiseArray(mentor)
+    const expertiseMatch = expertiseArray.some(exp => exp.toLowerCase().includes(query))
 
     return (
       firstName.toLowerCase().includes(query) ||
@@ -444,26 +464,19 @@ export default function MentorshipPage() {
                             {/* Expertise Tags */}
                             <div className="flex flex-wrap gap-2 mb-5">
                               {(() => {
-                                const expertiseArray = Array.isArray(mentor.expertise)
-                                  ? mentor.expertise
-                                  : mentor.areaofexpertise
-                                    ? [mentor.areaofexpertise]
-                                    : []
+                                const expertiseArray = getExpertiseArray(mentor)
 
-                                return expertiseArray.slice(0, 3).map((exp: any, idx) => {
-                                  const label = typeof exp === 'string' ? exp : exp.category
-                                  return (
-                                    <span
-                                      key={idx}
-                                      className="inline-flex items-center px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 text-emerald-700 dark:text-emerald-300 rounded-lg border border-emerald-200 dark:border-emerald-800"
-                                    >
-                                      {label}
-                                    </span>
-                                  )
-                                })
+                                return expertiseArray.slice(0, 3).map((label, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="inline-flex items-center px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 text-emerald-700 dark:text-emerald-300 rounded-lg border border-emerald-200 dark:border-emerald-800"
+                                  >
+                                    {label}
+                                  </span>
+                                ))
                               })()}
                               {(() => {
-                                const expertiseArray = Array.isArray(mentor.expertise) ? mentor.expertise : []
+                                const expertiseArray = getExpertiseArray(mentor)
                                 return expertiseArray.length > 3 && (
                                   <span className="inline-flex items-center px-3 py-1.5 text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-lg border border-gray-200 dark:border-gray-700">
                                     +{expertiseArray.length - 3} more

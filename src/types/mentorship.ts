@@ -50,7 +50,7 @@ export interface Booking {
     scheduled_at?: string; // For compatibility
     start_time: string;
     end_time: string;
-    status: 'pending' | 'confirmed' | 'rejected' | 'cancelled' | 'completed' | 'rescheduled' | 'no_show';
+    status: 'pending' | 'confirmed' | 'rejected' | 'cancelled_by_mentee' | 'cancelled_by_mentor' | 'completed' | 'rescheduled' | 'no_show';
     meeting_link?: string;
     topic?: string;
     description?: string; // For compatibility
@@ -60,6 +60,7 @@ export interface Booking {
     booking_version?: number; // For compatibility
     created_at: string;
     updated_at: string;
+    cancellation_reason?: string;
 }
 
 export interface Review {

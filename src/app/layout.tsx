@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import { Toaster } from 'sonner'
 import ErrorBoundary from '@/components/ui/ErrorBoundary'
 
 const inter = Inter({ 
@@ -87,6 +88,7 @@ export default function RootLayout({
             <div id="__next">
               {children}
             </div>
+            <Toaster position="top-center" richColors />
           </ThemeProvider>
         </ErrorBoundary>
       </body>

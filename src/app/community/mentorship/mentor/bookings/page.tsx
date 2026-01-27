@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
+import {
   ArrowLeft, Calendar, Clock, User, Video, X,
   CheckCircle, XCircle, AlertCircle, MessageSquare,
-  ExternalLink, Filter, Search
+  ExternalLink, Filter, Search, Ban, CalendarDays
 } from 'lucide-react'
+import { toast } from 'sonner'
 import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import { format, parseISO } from 'date-fns'
@@ -23,12 +24,12 @@ interface Booking {
   scheduled_at: string
   topic: string
   description?: string
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled_by_mentee' | 'cancelled_by_mentor'
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled_by_mentee' | 'cancelled_by_mentor' | 'rejected' | 'rescheduled' | 'no_show'
   meeting_link?: string
   created_at: string
 }
 
-type FilterStatus = 'all' | 'pending' | 'confirmed' | 'upcoming' | 'completed'
+type FilterStatus = 'all' | 'pending' | 'confirmed' | 'upcoming' | 'completed' | 'cancelled' | 'rescheduled'
 
 export default function MentorBookingsPage() {
   const router = useRouter()
@@ -92,12 +93,16 @@ export default function MentorBookingsPage() {
     } else if (filterStatus === 'confirmed') {
       filtered = filtered.filter(b => b.status === 'confirmed')
     } else if (filterStatus === 'upcoming') {
-      filtered = filtered.filter(b => 
+      filtered = filtered.filter(b =>
         (b.status === 'pending' || b.status === 'confirmed') &&
         new Date(b.scheduled_at) > new Date()
       )
     } else if (filterStatus === 'completed') {
       filtered = filtered.filter(b => b.status === 'completed')
+    } else if (filterStatus === 'cancelled') {
+      filtered = filtered.filter(b => ['cancelled_by_mentee', 'cancelled_by_mentor', 'rejected', 'no_show'].includes(b.status))
+    } else if (filterStatus === 'rescheduled') {
+      filtered = filtered.filter(b => b.status === 'rescheduled')
     }
 
     // Filter by search query
@@ -110,7 +115,7 @@ export default function MentorBookingsPage() {
     }
 
     // Sort by scheduled date (newest first)
-    filtered.sort((a, b) => 
+    filtered.sort((a, b) =>
       new Date(b.scheduled_at).getTime() - new Date(a.scheduled_at).getTime()
     )
 
@@ -138,9 +143,10 @@ export default function MentorBookingsPage() {
       }
 
       await fetchBookings()
-      alert('Booking confirmed successfully!')
+      await fetchBookings()
+      toast.success('Booking confirmed successfully!')
     } catch (err: any) {
-      alert(err.message || 'Failed to confirm booking')
+      toast.error(err.message || 'Failed to confirm booking')
     } finally {
       setProcessing(false)
     }
@@ -172,9 +178,13 @@ export default function MentorBookingsPage() {
       setShowMeetingLinkModal(false)
       setMeetingLink('')
       setSelectedBooking(null)
-      alert('Meeting link added successfully!')
+      await fetchBookings()
+      setShowMeetingLinkModal(false)
+      setMeetingLink('')
+      setSelectedBooking(null)
+      toast.success('Meeting link added successfully!')
     } catch (err: any) {
-      alert(err.message || 'Failed to add meeting link')
+      toast.error(err.message || 'Failed to add meeting link')
     } finally {
       setProcessing(false)
     }
@@ -194,7 +204,7 @@ export default function MentorBookingsPage() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             status: 'cancelled_by_mentor',
             cancellation_reason: cancelReason || undefined
           })
@@ -209,9 +219,13 @@ export default function MentorBookingsPage() {
       setShowCancelModal(false)
       setCancelReason('')
       setSelectedBooking(null)
-      alert('Booking cancelled successfully')
+      await fetchBookings()
+      setShowCancelModal(false)
+      setCancelReason('')
+      setSelectedBooking(null)
+      toast.success('Booking cancelled successfully')
     } catch (err: any) {
-      alert(err.message || 'Failed to cancel booking')
+      toast.error(err.message || 'Failed to cancel booking')
     } finally {
       setProcessing(false)
     }
@@ -223,7 +237,10 @@ export default function MentorBookingsPage() {
       confirmed: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400',
       completed: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400',
       cancelled_by_mentee: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400',
-      cancelled_by_mentor: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+      cancelled_by_mentor: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400',
+      rejected: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400',
+      no_show: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400',
+      rescheduled: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400'
     }
 
     const labels = {
@@ -231,7 +248,10 @@ export default function MentorBookingsPage() {
       confirmed: 'Confirmed',
       completed: 'Completed',
       cancelled_by_mentee: 'Cancelled',
-      cancelled_by_mentor: 'Cancelled'
+      cancelled_by_mentor: 'Cancelled',
+      rejected: 'Declined',
+      no_show: 'No Show',
+      rescheduled: 'Rescheduled'
     }
 
     return (
@@ -291,15 +311,14 @@ export default function MentorBookingsPage() {
                 </div>
               </div>
               <div className="flex gap-2 overflow-x-auto">
-                {(['all', 'pending', 'confirmed', 'upcoming', 'completed'] as FilterStatus[]).map((status) => (
+                {(['all', 'pending', 'confirmed', 'upcoming', 'rescheduled', 'completed', 'cancelled'] as FilterStatus[]).map((status) => (
                   <button
                     key={status}
                     onClick={() => setFilterStatus(status)}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                      filterStatus === status
+                    className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${filterStatus === status
                         ? 'bg-emerald-600 text-white'
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    }`}
+                      }`}
                   >
                     {status.charAt(0).toUpperCase() + status.slice(1)}
                   </button>

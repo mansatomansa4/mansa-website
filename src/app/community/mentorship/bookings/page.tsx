@@ -4,15 +4,16 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { 
-  Calendar, Clock, User, X, Check, 
-  MessageSquare, Star, AlertCircle, Filter
+import {
+  Calendar, Clock, User, X, Check,
+  MessageSquare, Star, AlertCircle, Filter, Ban, CalendarDays
 } from 'lucide-react'
 import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import { CardSkeleton } from '@/components/ui/Skeleton'
 import { NoBookingsFound } from '@/components/ui/EmptyState'
 import ErrorBoundary from '@/components/ui/ErrorBoundary'
+import { toast } from 'sonner'
 
 interface Booking {
   id: string
@@ -22,7 +23,7 @@ interface Booking {
   end_time: string
   topic: string
   description: string
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled_by_mentee' | 'cancelled_by_mentor'
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled_by_mentee' | 'cancelled_by_mentor' | 'rejected' | 'rescheduled' | 'no_show'
   meeting_link?: string
   mentor_notes?: string
   rating?: number
@@ -128,10 +129,10 @@ export default function MyBookingsPage() {
 
       if (!response.ok) throw new Error('Failed to cancel booking')
 
-      alert('Booking cancelled successfully')
+      toast.success('Booking cancelled successfully')
       fetchBookings()
     } catch (error: any) {
-      alert(error.message || 'Failed to cancel booking')
+      toast.error(error.message || 'Failed to cancel booking')
     }
   }
 
@@ -158,12 +159,12 @@ export default function MyBookingsPage() {
 
       if (!response.ok) throw new Error('Failed to submit feedback')
 
-      alert('Thank you for your feedback!')
+      toast.success('Thank you for your feedback!')
       setShowFeedbackModal(false)
       setSelectedBooking(null)
       fetchBookings()
     } catch (error: any) {
-      alert(error.message || 'Failed to submit feedback')
+      toast.error(error.message || 'Failed to submit feedback')
     }
   }
 
@@ -194,7 +195,11 @@ export default function MyBookingsPage() {
         return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
       case 'cancelled_by_mentee':
       case 'cancelled_by_mentor':
+      case 'rejected':
+      case 'no_show':
         return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+      case 'rescheduled':
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
     }
@@ -208,6 +213,14 @@ export default function MyBookingsPage() {
         return <Clock className="w-4 h-4" />
       case 'completed':
         return <Check className="w-4 h-4" />
+      case 'rejected':
+      case 'cancelled_by_mentee':
+      case 'cancelled_by_mentor':
+        return <X className="w-4 h-4" />
+      case 'no_show':
+        return <Ban className="w-4 h-4" />
+      case 'rescheduled':
+        return <CalendarDays className="w-4 h-4" />
       default:
         return <X className="w-4 h-4" />
     }
@@ -215,15 +228,18 @@ export default function MyBookingsPage() {
 
   const filteredBookings = bookings.filter(booking => {
     if (filter === 'all') return true
+    if (filter === 'cancelled') {
+      return ['cancelled_by_mentee', 'cancelled_by_mentor', 'rejected', 'no_show'].includes(booking.status)
+    }
     return booking.status === filter
   })
 
   const upcomingBookings = filteredBookings.filter(
-    b => ['pending', 'confirmed'].includes(b.status) && new Date(b.session_date) >= new Date()
+    b => ['pending', 'confirmed', 'rescheduled'].includes(b.status) && new Date(b.session_date) >= new Date()
   )
   const pastBookings = filteredBookings.filter(
-    b => ['completed', 'cancelled_by_mentee', 'cancelled_by_mentor'].includes(b.status) || 
-    (new Date(b.session_date) < new Date() && !['pending', 'confirmed'].includes(b.status))
+    b => ['completed', 'cancelled_by_mentee', 'cancelled_by_mentor', 'rejected', 'no_show'].includes(b.status) ||
+      (new Date(b.session_date) < new Date() && !['pending', 'confirmed', 'rescheduled'].includes(b.status))
   )
 
   if (loading) {
@@ -259,7 +275,9 @@ export default function MyBookingsPage() {
               { value: 'all', label: 'All' },
               { value: 'pending', label: 'Pending' },
               { value: 'confirmed', label: 'Confirmed' },
-              { value: 'completed', label: 'Completed' }
+              { value: 'rescheduled', label: 'Rescheduled' },
+              { value: 'completed', label: 'Completed' },
+              { value: 'cancelled', label: 'Cancelled/Declined' }
             ].map(tab => (
               <button
                 key={tab.value}
@@ -289,173 +307,173 @@ export default function MyBookingsPage() {
           ) : (
             <>
               {upcomingBookings.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                Upcoming Sessions
-              </h2>
-              <div className="space-y-4">
-                {upcomingBookings.map(booking => {
-                  const mentor = mentors.get(booking.mentor_id)
-                  return (
-                    <motion.div
-                      key={booking.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
-                    >
-                      <div className="flex flex-col md:flex-row md:items-start md:justify-between">
-                        <div className="flex items-start space-x-4 flex-1">
-                          {mentor?.photo_url ? (
-                            <img
-                              src={mentor.photo_url}
-                              alt={`${mentor.user.first_name} ${mentor.user.last_name}`}
-                              className="w-16 h-16 rounded-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                              {mentor?.user.first_name[0]}{mentor?.user.last_name[0]}
-                            </div>
-                          )}
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2 mb-2">
-                              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                {mentor?.user.first_name} {mentor?.user.last_name}
-                              </h3>
-                              <span className={`px-2 py-1 text-xs font-medium rounded-full flex items-center space-x-1 ${getStatusColor(booking.status)}`}>
-                                {getStatusIcon(booking.status)}
-                                <span>{booking.status.replace('_', ' ')}</span>
-                              </span>
-                            </div>
-                            {mentor?.job_title && (
-                              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                                {mentor.job_title}
-                              </p>
-                            )}
-                            <div className="space-y-2">
-                              <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                                <Calendar className="w-4 h-4 mr-2" />
-                                {formatDate(booking.session_date)}
-                              </div>
-                              <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                                <Clock className="w-4 h-4 mr-2" />
-                                {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
-                              </div>
-                              <div className="flex items-start text-sm text-gray-600 dark:text-gray-400">
-                                <MessageSquare className="w-4 h-4 mr-2 mt-0.5" />
-                                <span className="font-medium">{booking.topic}</span>
-                              </div>
-                            </div>
-                            {booking.meeting_link && (
-                              <a
-                                href={booking.meeting_link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center mt-3 text-sm text-emerald-600 dark:text-emerald-400 hover:underline"
-                              >
-                                Join Meeting →
-                              </a>
-                            )}
-                          </div>
-                        </div>
-                        <div className="mt-4 md:mt-0 md:ml-4 flex flex-col space-y-2">
-                          {booking.status === 'pending' && (
-                            <button
-                              onClick={() => handleCancelBooking(booking.id, booking.booking_version)}
-                              className="px-4 py-2 text-sm bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
-                            >
-                              Cancel Request
-                            </button>
-                          )}
-                          <Link
-                            href={`/community/mentorship/${booking.mentor_id}`}
-                            className="px-4 py-2 text-sm text-center bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                          >
-                            View Profile
-                          </Link>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Past Sessions */}
-          {pastBookings.length > 0 && (
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                Past Sessions
-              </h2>
-              <div className="space-y-4">
-                {pastBookings.map(booking => {
-                  const mentor = mentors.get(booking.mentor_id)
-                  return (
-                    <motion.div
-                      key={booking.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg opacity-80"
-                    >
-                      <div className="flex flex-col md:flex-row md:items-start md:justify-between">
-                        <div className="flex items-start space-x-4 flex-1">
-                          {mentor?.photo_url ? (
-                            <img
-                              src={mentor.photo_url}
-                              alt={`${mentor.user.first_name} ${mentor.user.last_name}`}
-                              className="w-16 h-16 rounded-full object-cover grayscale"
-                            />
-                          ) : (
-                            <div className="w-16 h-16 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                              {mentor?.user.first_name[0]}{mentor?.user.last_name[0]}
-                            </div>
-                          )}
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2 mb-2">
-                              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                {mentor?.user.first_name} {mentor?.user.last_name}
-                              </h3>
-                              <span className={`px-2 py-1 text-xs font-medium rounded-full flex items-center space-x-1 ${getStatusColor(booking.status)}`}>
-                                {getStatusIcon(booking.status)}
-                                <span>{booking.status.replace('_', ' ')}</span>
-                              </span>
-                            </div>
-                            <div className="space-y-2">
-                              <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                                <Calendar className="w-4 h-4 mr-2" />
-                                {formatDate(booking.session_date)}
-                              </div>
-                              <div className="flex items-start text-sm text-gray-600 dark:text-gray-400">
-                                <MessageSquare className="w-4 h-4 mr-2 mt-0.5" />
-                                <span className="font-medium">{booking.topic}</span>
-                              </div>
-                              {booking.rating && (
-                                <div className="flex items-center text-sm text-yellow-600 dark:text-yellow-400">
-                                  <Star className="w-4 h-4 mr-1 fill-current" />
-                                  <span>Rated {booking.rating}/5</span>
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                    Upcoming Sessions
+                  </h2>
+                  <div className="space-y-4">
+                    {upcomingBookings.map(booking => {
+                      const mentor = mentors.get(booking.mentor_id)
+                      return (
+                        <motion.div
+                          key={booking.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg"
+                        >
+                          <div className="flex flex-col md:flex-row md:items-start md:justify-between">
+                            <div className="flex items-start space-x-4 flex-1">
+                              {mentor?.photo_url ? (
+                                <img
+                                  src={mentor.photo_url}
+                                  alt={`${mentor.user.first_name} ${mentor.user.last_name}`}
+                                  className="w-16 h-16 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                                  {mentor?.user.first_name[0]}{mentor?.user.last_name[0]}
                                 </div>
                               )}
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-2">
+                                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {mentor?.user.first_name} {mentor?.user.last_name}
+                                  </h3>
+                                  <span className={`px-2 py-1 text-xs font-medium rounded-full flex items-center space-x-1 ${getStatusColor(booking.status)}`}>
+                                    {getStatusIcon(booking.status)}
+                                    <span>{booking.status.replace('_', ' ')}</span>
+                                  </span>
+                                </div>
+                                {mentor?.job_title && (
+                                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                                    {mentor.job_title}
+                                  </p>
+                                )}
+                                <div className="space-y-2">
+                                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                                    <Calendar className="w-4 h-4 mr-2" />
+                                    {formatDate(booking.session_date)}
+                                  </div>
+                                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                                    <Clock className="w-4 h-4 mr-2" />
+                                    {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
+                                  </div>
+                                  <div className="flex items-start text-sm text-gray-600 dark:text-gray-400">
+                                    <MessageSquare className="w-4 h-4 mr-2 mt-0.5" />
+                                    <span className="font-medium">{booking.topic}</span>
+                                  </div>
+                                </div>
+                                {booking.meeting_link && (
+                                  <a
+                                    href={booking.meeting_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center mt-3 text-sm text-emerald-600 dark:text-emerald-400 hover:underline"
+                                  >
+                                    Join Meeting →
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                            <div className="mt-4 md:mt-0 md:ml-4 flex flex-col space-y-2">
+                              {booking.status === 'pending' && (
+                                <button
+                                  onClick={() => handleCancelBooking(booking.id, booking.booking_version)}
+                                  className="px-4 py-2 text-sm bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                                >
+                                  Cancel Request
+                                </button>
+                              )}
+                              <Link
+                                href={`/community/mentorship/${booking.mentor_id}`}
+                                className="px-4 py-2 text-sm text-center bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                              >
+                                View Profile
+                              </Link>
                             </div>
                           </div>
-                        </div>
-                        {booking.status === 'completed' && !booking.rating && (
-                          <button
-                            onClick={() => {
-                              setSelectedBooking(booking)
-                              setShowFeedbackModal(true)
-                            }}
-                            className="mt-4 md:mt-0 md:ml-4 px-4 py-2 text-sm bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-lg hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-colors"
-                          >
-                            Leave Feedback
-                          </button>
-                        )}
-                      </div>
-                    </motion.div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
+                        </motion.div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Past Sessions */}
+              {pastBookings.length > 0 && (
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                    Past Sessions
+                  </h2>
+                  <div className="space-y-4">
+                    {pastBookings.map(booking => {
+                      const mentor = mentors.get(booking.mentor_id)
+                      return (
+                        <motion.div
+                          key={booking.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg opacity-80"
+                        >
+                          <div className="flex flex-col md:flex-row md:items-start md:justify-between">
+                            <div className="flex items-start space-x-4 flex-1">
+                              {mentor?.photo_url ? (
+                                <img
+                                  src={mentor.photo_url}
+                                  alt={`${mentor.user.first_name} ${mentor.user.last_name}`}
+                                  className="w-16 h-16 rounded-full object-cover grayscale"
+                                />
+                              ) : (
+                                <div className="w-16 h-16 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                                  {mentor?.user.first_name[0]}{mentor?.user.last_name[0]}
+                                </div>
+                              )}
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-2">
+                                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {mentor?.user.first_name} {mentor?.user.last_name}
+                                  </h3>
+                                  <span className={`px-2 py-1 text-xs font-medium rounded-full flex items-center space-x-1 ${getStatusColor(booking.status)}`}>
+                                    {getStatusIcon(booking.status)}
+                                    <span>{booking.status.replace('_', ' ')}</span>
+                                  </span>
+                                </div>
+                                <div className="space-y-2">
+                                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                                    <Calendar className="w-4 h-4 mr-2" />
+                                    {formatDate(booking.session_date)}
+                                  </div>
+                                  <div className="flex items-start text-sm text-gray-600 dark:text-gray-400">
+                                    <MessageSquare className="w-4 h-4 mr-2 mt-0.5" />
+                                    <span className="font-medium">{booking.topic}</span>
+                                  </div>
+                                  {booking.rating && (
+                                    <div className="flex items-center text-sm text-yellow-600 dark:text-yellow-400">
+                                      <Star className="w-4 h-4 mr-1 fill-current" />
+                                      <span>Rated {booking.rating}/5</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            {booking.status === 'completed' && !booking.rating && (
+                              <button
+                                onClick={() => {
+                                  setSelectedBooking(booking)
+                                  setShowFeedbackModal(true)
+                                }}
+                                className="mt-4 md:mt-0 md:ml-4 px-4 py-2 text-sm bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-lg hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-colors"
+                              >
+                                Leave Feedback
+                              </button>
+                            )}
+                          </div>
+                        </motion.div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -497,11 +515,10 @@ export default function MyBookingsPage() {
                       className="transition-transform hover:scale-110"
                     >
                       <Star
-                        className={`w-8 h-8 ${
-                          rating <= feedbackData.rating
-                            ? 'text-yellow-400 fill-current'
-                            : 'text-gray-300 dark:text-gray-600'
-                        }`}
+                        className={`w-8 h-8 ${rating <= feedbackData.rating
+                          ? 'text-yellow-400 fill-current'
+                          : 'text-gray-300 dark:text-gray-600'
+                          }`}
                       />
                     </button>
                   ))}
