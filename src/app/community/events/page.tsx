@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Calendar, MapPin, Clock, Users, ArrowRight, Download, Image as ImageIcon } from 'lucide-react'
+import { Calendar, MapPin, Clock, Users, ArrowRight, Download, Image as ImageIcon, UserPlus } from 'lucide-react'
 import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
-import { getApiBaseUrl } from '@/lib/api'
+import { getApiBaseUrl, api } from '@/lib/api'
+import EventRegistrationModal, { EventRegistrationData } from '@/components/events/EventRegistrationModal'
 
 // Event type matching backend model
 interface Event {
@@ -36,6 +37,8 @@ export default function EventsPage() {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+  const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false)
 
   useEffect(() => {
     fetchEvents()
@@ -65,6 +68,27 @@ export default function EventsPage() {
   const upcomingEvents = Array.isArray(events) ? events.filter(event => event.status === 'upcoming') : []
   const pastEvents = Array.isArray(events) ? events.filter(event => event.status === 'past') : []
   const displayEvents = activeTab === 'upcoming' ? upcomingEvents : pastEvents
+
+  const handleRegisterClick = (event: Event) => {
+    setSelectedEvent(event)
+    setIsRegistrationModalOpen(true)
+  }
+
+  const handleRegistrationSubmit = async (data: EventRegistrationData) => {
+    try {
+      const response = await api.registerForEvent(data)
+
+      if (response.error) {
+        throw new Error(response.error)
+      }
+
+      // Success - modal will handle the success state
+      console.log('Registration successful:', response.data)
+    } catch (error: any) {
+      console.error('Registration error:', error)
+      throw error
+    }
+  }
 
   return (
     <div className="relative flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 text-gray-900 dark:text-white overflow-x-hidden">
@@ -258,13 +282,23 @@ export default function EventsPage() {
 
                       {/* Action Buttons */}
                       <div className="flex gap-2">
-                        <button className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2.5 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center group text-sm">
-                          <span>View Details</span>
-                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                        </button>
+                        {activeTab === 'upcoming' ? (
+                          <button
+                            onClick={() => handleRegisterClick(event)}
+                            className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2.5 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center group text-sm"
+                          >
+                            <UserPlus className="w-4 h-4 mr-2" />
+                            <span>Register</span>
+                          </button>
+                        ) : (
+                          <button className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2.5 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center group text-sm">
+                            <span>View Details</span>
+                            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                          </button>
+                        )}
                         {event.flyer && (
-                          <a 
-                            href={event.flyer} 
+                          <a
+                            href={event.flyer}
                             download
                             target="_blank"
                             rel="noopener noreferrer"
@@ -314,6 +348,17 @@ export default function EventsPage() {
       </main>
 
       <ScrollToTopButton />
+
+      {/* Registration Modal */}
+      <EventRegistrationModal
+        isOpen={isRegistrationModalOpen}
+        onClose={() => {
+          setIsRegistrationModalOpen(false)
+          setSelectedEvent(null)
+        }}
+        event={selectedEvent}
+        onSubmit={handleRegistrationSubmit}
+      />
     </div>
   )
 }

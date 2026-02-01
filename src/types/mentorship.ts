@@ -23,6 +23,7 @@ export interface Mentor {
     years_of_experience?: number;
     is_approved: boolean;
     is_accepting_requests?: boolean; // For compatibility
+    version?: number; // For optimistic locking
     created_at: string;
 }
 
@@ -76,11 +77,13 @@ export interface Review {
 export interface AvailabilitySlot {
     id: string;
     mentor_id: string;
-    day_of_week: number;
+    day_of_week?: number;  // Optional - only required for recurring slots
     start_time: string;
     end_time: string;
     is_recurring: boolean;
-    date?: string;
+    specific_date?: string;  // For non-recurring slots
+    date?: string;  // Deprecated, use specific_date
+    is_active?: boolean;  // Whether the slot is active
 }
 
 export interface MentorStats {

@@ -171,6 +171,109 @@ class ApiClient {
   async checkExistingApplication(projectId: number, email: string): Promise<ApiResponse<{ exists: boolean; application?: any }>> {
     return this.request(`/platform/applications/check/?project_id=${projectId}&email=${encodeURIComponent(email)}`);
   }
+
+  // Initiative methods
+  async getInitiatives(params?: {
+    page?: number;
+    search?: string;
+    initiative_type?: string;
+    status?: string;
+  }): Promise<ApiResponse<PaginatedResponse<Initiative>>> {
+    const searchParams = new URLSearchParams();
+    if (params?.page) searchParams.set('page', params.page.toString());
+    if (params?.search) searchParams.set('search', params.search);
+    if (params?.initiative_type) searchParams.set('initiative_type', params.initiative_type);
+    if (params?.status) searchParams.set('status', params.status);
+
+    const query = searchParams.toString();
+    return this.request<PaginatedResponse<Initiative>>(`/platform/initiatives/${query ? `?${query}` : ''}`);
+  }
+
+  async getInitiative(id: number): Promise<ApiResponse<Initiative>> {
+    return this.request<Initiative>(`/platform/initiatives/${id}/`);
+  }
+
+  // Research Cohort Application methods
+  async submitResearchCohortApplication(applicationData: {
+    email: string;
+    research_interest: string;
+    motivation: string;
+    researchArea?: string;
+    currentRole?: string;
+    experience?: string;
+    reason?: string;
+  }): Promise<ApiResponse<any>> {
+    // Map frontend fields to backend fields
+    const backendData = {
+      email: applicationData.email,
+      research_interest: applicationData.researchArea || applicationData.research_interest,
+      motivation: applicationData.reason || applicationData.motivation,
+      research_experience: applicationData.experience || '',
+      // Add other fields as needed
+    };
+
+    return this.request('/platform/research-cohort/apply/', {
+      method: 'POST',
+      body: JSON.stringify(backendData),
+    });
+  }
+
+  async verifyResearchCohortEmail(email: string): Promise<ApiResponse<{ exists: boolean; is_member: boolean; member?: any }>> {
+    return this.request(`/platform/research-cohort/verify-email/?email=${encodeURIComponent(email)}`);
+  }
+
+  // Education Cohort Application methods
+  async submitEducationCohortApplication(applicationData: {
+    email: string;
+    education_interest: string;
+    motivation: string;
+    skillLevel?: string;
+    learningGoals?: string;
+    background?: string;
+    reason?: string;
+  }): Promise<ApiResponse<any>> {
+    // Map frontend fields to backend fields
+    const backendData = {
+      email: applicationData.email,
+      education_interest: applicationData.learningGoals || applicationData.education_interest,
+      motivation: applicationData.reason || applicationData.motivation,
+      current_education_level: applicationData.skillLevel || '',
+      // Add other fields as needed
+    };
+
+    return this.request('/platform/education-cohort/apply/', {
+      method: 'POST',
+      body: JSON.stringify(backendData),
+    });
+  }
+
+  async verifyEducationCohortEmail(email: string): Promise<ApiResponse<{ exists: boolean; is_member: boolean; member?: any }>> {
+    return this.request(`/platform/education-cohort/verify-email/?email=${encodeURIComponent(email)}`);
+  }
+
+  // Event Registration methods
+  async registerForEvent(registrationData: {
+    event_id: string;
+    full_name: string;
+    email: string;
+    phone_number: string;
+    is_student: boolean;
+    institution_name?: string;
+    is_member: boolean;
+  }): Promise<ApiResponse<any>> {
+    return this.request('/events/register/', {
+      method: 'POST',
+      body: JSON.stringify(registrationData),
+    });
+  }
+
+  async getEventRegistrations(eventId: string): Promise<ApiResponse<any[]>> {
+    return this.request(`/events/${eventId}/registrations/`);
+  }
+
+  async checkEventRegistration(eventId: string, email: string): Promise<ApiResponse<{ registered: boolean; registration?: any }>> {
+    return this.request(`/events/check-registration/?event_id=${eventId}&email=${encodeURIComponent(email)}`);
+  }
 }
 
 // Type definitions
@@ -240,6 +343,43 @@ export interface PlatformProject {
   // Timestamps
   created_at: string;
   updated_at?: string;
+}
+
+export interface Initiative {
+  id: number;
+  title: string;
+  description?: string;
+  initiative_type: 'research' | 'education' | 'community' | 'technology' | 'other';
+  status?: string;
+  priority?: string;
+  objectives?: string;
+  expected_deliverables?: string;
+  impact_areas?: string[];
+  focal_person_id?: string;
+  focal_person_name?: string;
+  focal_person_email?: string;
+  domain_tags?: string[];
+  resources_needed?: any[];
+  skills_required?: string;
+  technology_stack?: string[];
+  timeline_start?: string;
+  timeline_end?: string;
+  estimated_duration_months?: number;
+  budget_estimate?: number;
+  current_budget?: number;
+  funding_sources?: string[];
+  target_participants?: number;
+  current_participants?: number;
+  participant_criteria?: string;
+  image_url?: string;
+  website_url?: string;
+  documentation_url?: string;
+  is_public?: boolean;
+  is_accepting_applications?: boolean;
+  application_deadline?: string;
+  created_at: string;
+  updated_at?: string;
+  launched_at?: string;
 }
 
 export interface Member {
