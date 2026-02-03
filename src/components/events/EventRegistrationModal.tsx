@@ -205,11 +205,7 @@ export default function EventRegistrationModal({
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Your registration for {event.title} has been confirmed
                 </p>
-                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 max-w-md mx-auto mb-6">
-                  <p className="text-sm text-blue-800 dark:text-blue-300">
-                    A confirmation email has been sent to {formData.email}
-                  </p>
-                </div>
+
 
                 {/* Join Community Button */}
                 {showJoinCommunity && (
