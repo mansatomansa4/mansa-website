@@ -8,6 +8,7 @@ import Navigation from '@/components/layout/Navigation'
 import ScrollToTopButton from '@/components/ScrollToTopButton'
 import { getApiBaseUrl, api } from '@/lib/api'
 import EventRegistrationModal, { EventRegistrationData } from '@/components/events/EventRegistrationModal'
+import { formatTimeRange } from '@/lib/date-utils'
 
 // Event type matching backend model
 interface Event {
@@ -246,7 +247,7 @@ export default function EventsPage() {
                         </div>
                         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                           <Clock className="w-4 h-4 mr-3 text-purple-600" />
-                          <span>{event.time_display || `${event.start_time} - ${event.end_time}`}</span>
+                          <span>{event.time_display || formatTimeRange(event.start_time, event.end_time)}</span>
                         </div>
                         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                           <MapPin className="w-4 h-4 mr-3 text-purple-600" />
