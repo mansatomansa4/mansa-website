@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "build": "bash build-static.sh",
+    "build:next": "next build",
+    "start": "npx serve@latest out -p 3000",
+    "lint": "next lint",
+    "export": "bash build-static.sh"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.36.0",
