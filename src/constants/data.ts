@@ -117,7 +117,7 @@ const teamMembers = [
   },
   {
     id: 14,
-    name: "Mohammed Dayyaen ",
+    name: "Mohammed Dayyan Abdul Wahab",
     position: "Platform Technology",
     image: "/mohammed.jpeg",
     socialLinks: {
