@@ -17,7 +17,9 @@ const nextConfig = {
   // Disable server-side features for static export
   trailingSlash: true,
   
-  // Skip dynamic routes during build - they'll work client-side
+  // Prevents Next.js from auto-redirecting between /path and /path/ (based on trailingSlash setting)
+  // Note: This does not affect dynamic route generation - dynamic routes (e.g., [id].tsx) 
+  // must be handled via generateStaticParams or client-side fallback behavior
   skipTrailingSlashRedirect: true,
   
   experimental: {

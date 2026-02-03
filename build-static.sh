@@ -8,7 +8,7 @@ echo "==========================================="
 echo ""
 
 # Colors for output
-GREEN='\033[0.32m'
+GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
@@ -18,6 +18,24 @@ echo "📦 Backing up dynamic routes..."
 BACKUP_DIR="/tmp/mansa-dynamic-routes-$(date +%s)"
 mkdir -p "$BACKUP_DIR"
 
+# Cleanup function to restore backed-up routes
+cleanup() {
+    echo ""
+    echo "📥 Restoring dynamic routes..."
+    if [ -d "$BACKUP_DIR/[id]" ]; then
+        mv "$BACKUP_DIR/[id]" "src/app/community/mentorship/" 2>/dev/null
+        echo "✅ Restored [id] route"
+    fi
+    
+    # Clean up backup directory
+    if [ -d "$BACKUP_DIR" ]; then
+        rm -rf "$BACKUP_DIR"
+    fi
+}
+
+# Register cleanup function to run on script exit (normal or interrupted)
+trap cleanup EXIT INT TERM
+
 if [ -d "src/app/community/mentorship/[id]" ]; then
     mv "src/app/community/mentorship/[id]" "$BACKUP_DIR/"
     echo "✅ Backed up [id] route to $BACKUP_DIR"
@@ -26,20 +44,11 @@ fi
 # Build the static site
 echo ""
 echo "🔨 Building static site..."
-npm run build
+npx next build
 
 BUILD_EXIT_CODE=$?
 
-# Restore dynamic routes
-echo ""
-echo "📥 Restoring dynamic routes..."
-if [ -d "$BACKUP_DIR/[id]" ]; then
-    mv "$BACKUP_DIR/[id]" "src/app/community/mentorship/"
-    echo "✅ Restored [id] route"
-fi
-
-# Clean up backup directory
-rm -rf "$BACKUP_DIR"
+# The cleanup trap will handle restoring routes and cleaning up
 
 # Check build status
 echo ""

@@ -91,6 +91,9 @@ optimize_videos() {
             echo "  Processing: $filename.mp4"
             echo "  This may take a few minutes..."
             
+            # Create temp log file for ffmpeg output
+            temp_log=$(mktemp)
+            
             ffmpeg -i "$video" \
                 -c:v libx264 \
                 -crf 28 \
@@ -99,12 +102,31 @@ optimize_videos() {
                 -b:a 128k \
                 -movflags +faststart \
                 "public/videos/optimized/${filename}-optimized.mp4" \
-                -y 2>&1 | grep -E "time=|Duration:"
+                -y > "$temp_log" 2>&1
             
-            # Show file size comparison
-            original_size=$(du -h "$video" | cut -f1)
-            optimized_size=$(du -h "public/videos/optimized/${filename}-optimized.mp4" | cut -f1)
-            echo "  Original: $original_size → Optimized: $optimized_size"
+            # Check ffmpeg exit status
+            ffmpeg_exit_code=$?
+            
+            if [ $ffmpeg_exit_code -ne 0 ]; then
+                echo "  ❌ Error: FFmpeg failed to process $filename.mp4"
+                echo "  Check the log for details:"
+                tail -10 "$temp_log"
+                rm -f "$temp_log"
+                continue
+            fi
+            
+            # Show progress info from log if available
+            grep -E "time=|Duration:" "$temp_log" | tail -5
+            rm -f "$temp_log"
+            
+            # Show file size comparison only if conversion succeeded
+            if [ -f "public/videos/optimized/${filename}-optimized.mp4" ]; then
+                original_size=$(du -h "$video" | cut -f1)
+                optimized_size=$(du -h "public/videos/optimized/${filename}-optimized.mp4" | cut -f1)
+                echo "  Original: $original_size → Optimized: $optimized_size"
+            else
+                echo "  ❌ Error: Output file was not created"
+            fi
             echo ""
         fi
     done
@@ -133,39 +155,40 @@ show_sizes() {
 
 # Main menu
 show_menu() {
-    echo "What would you like to do?"
-    echo "1) Check dependencies"
-    echo "2) Optimize images"
-    echo "3) Optimize videos"
-    echo "4) Optimize everything"
-    echo "5) Show current sizes"
-    echo "6) Exit"
-    echo ""
-    read -p "Enter choice [1-6]: " choice
-    
-    case $choice in
-        1) check_dependencies ;;
-        2) optimize_images ;;
-        3) optimize_videos ;;
-        4) 
-            check_dependencies
-            optimize_images
-            optimize_videos
-            ;;
-        5) show_sizes ;;
-        6) 
-            echo "👋 Goodbye!"
-            exit 0
-            ;;
-        *) 
-            echo "❌ Invalid choice"
-            ;;
-    esac
-    
-    echo ""
-    echo "Press Enter to continue..."
-    read
-    show_menu
+    while true; do
+        echo "What would you like to do?"
+        echo "1) Check dependencies"
+        echo "2) Optimize images"
+        echo "3) Optimize videos"
+        echo "4) Optimize everything"
+        echo "5) Show current sizes"
+        echo "6) Exit"
+        echo ""
+        read -p "Enter choice [1-6]: " choice
+        
+        case $choice in
+            1) check_dependencies ;;
+            2) optimize_images ;;
+            3) optimize_videos ;;
+            4) 
+                check_dependencies
+                optimize_images
+                optimize_videos
+                ;;
+            5) show_sizes ;;
+            6) 
+                echo "👋 Goodbye!"
+                return 0
+                ;;
+            *) 
+                echo "❌ Invalid choice"
+                ;;
+        esac
+        
+        echo ""
+        echo "Press Enter to continue..."
+        read
+    done
 }
 
 # Start
